@@ -35,7 +35,6 @@ class AddOrganisationCustomerForm(Form):
         (6, "Half Yearly"),
         (12, "Yearly")
     ]
-
     subscription_type = SelectField(choices=subscription_type_option)
     phone_number = StringField(validators=[v.Length(max=15)])
     start_date = StringField()
@@ -57,6 +56,7 @@ class AddOrganisationCustomerForm(Form):
             cust = customer
         else:
             cust = OracleOrgCustomer(email_id=self.email_id.data)
+        now = datetime.datetime.utcnow()
         service = OracleOrgServices.objects.get(id=self.service.data)
         cust.first_name = self.first_name.data
         cust.last_name = self.last_name.data
@@ -66,6 +66,7 @@ class AddOrganisationCustomerForm(Form):
         cust.due_date = datetime.strptime(self.due_date.data, '%d/%m/%y %H:%M:%S').strftime("%d/%m/%Y")
         cust.service = service
         cust.payment_mode = self.payment_mode.data
+        cust.created_at = now
         cust.product = OracleOrgPayment(
             payment_status = False,
             is_paying_today = False,

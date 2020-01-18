@@ -2,7 +2,7 @@ from flask_script import Command, prompt_bool
 from oracle import local_config as settings
 from oracle import db
 from oracle.services import logger
-from organisation.model import OracleOrgMerchant, OracleOrgCustomer
+from organisation.model import OracleOrgUser, OracleOrgCustomer
 
 
 class DropDB(Command):
@@ -28,7 +28,7 @@ class DescDB(Command):
     """Describes the db"""
 
     def run(self):
-        print("merchants    count : %s" % OracleOrgMerchant.objects.all().count())
+        print("merchants    count : %s" % OracleOrgUser.objects.all().count())
         print("customers  count : %s " % OracleOrgCustomer.objects.all().count())
 
 

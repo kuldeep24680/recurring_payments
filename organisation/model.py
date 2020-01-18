@@ -1,6 +1,7 @@
 from mongoengine import (
     StringField,
-    BooleanField)
+    BooleanField,
+    DateTimeField)
 
 from organisation.base_model import OracleDocumentABC
 from oracle import db
@@ -9,11 +10,12 @@ import datetime
 import bcrypt
 
 
-class OracleOrgMerchant(OracleDocumentABC):
+class OracleOrgUser(OracleDocumentABC):
     name = db.StringField()
     username = db.StringField(max_length=255, required=True)
     email_id = db.StringField(max_length=255, required=True)
-    password = StringField(max_length=128, required=True)
+    password = db.StringField(max_length=128, required=True)
+    created_at = db.DateTimeField()
     is_head_merchant = BooleanField(default=False)
     is_admin = BooleanField(default=False)
     
@@ -38,10 +40,12 @@ class OracleOrgMerchant(OracleDocumentABC):
         )
 
     @classmethod
-    def create_user(cls, username, password):
+    def create_user(cls, username, password, email_id, is_head_merchant=False):
         now = datetime.datetime.utcnow()
-        user = OracleOrgMerchant(username=username, created_at=now)
+        user = OracleOrgUser(username=username, email_id=email_id, created_at=now)
         user.set_password(password)
+        user.is_head_merchant = is_head_merchant
+        user.save()
         return user
 
 
@@ -76,7 +80,8 @@ class OracleOrgCreditCardDetails(db.EmbeddedDocument):
 class OracleOrgCustomer(OracleDocumentABC):
     first_name = db.StringField()
     last_name = db.StringField()
-    email_id = db.StringField(max_length=255, required=True)
+    email_id = db.StringField(max_length=255, required=True,unique=True)
+    created_at = db.DateTimeField()
     phone_number = db.StringField()
     subscription_type = db.StringField()
     start_date = db.StringField()
@@ -85,4 +90,3 @@ class OracleOrgCustomer(OracleDocumentABC):
     payment = db.EmbeddedDocumentField(OracleOrgPayment, default=OracleOrgPayment)
     subscription_id = db.StringField()
     card_details = db.EmbeddedDocumentField(OracleOrgCreditCardDetails, default=OracleOrgCreditCardDetails)
-

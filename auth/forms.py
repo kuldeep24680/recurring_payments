@@ -1,6 +1,6 @@
 from marshmallow import Schema, ValidationError, fields, validate, validates
 
-from organisation.model import OracleOrgMerchant
+from organisation.model import OracleOrgUser
 
 
 class NonEmptyStringField(fields.String):
@@ -22,12 +22,12 @@ class RegistrationForm(Schema):
     password2 = NonEmptyStringField(required=True)
     
     def validate_username(self,username):
-        user= OracleOrgMerchant.objects.filter(username=username.data).first()
+        user= OracleOrgUser.objects.filter(username=username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
 
     def validate_email(self,email):
-        user = OracleOrgMerchant.objects.filter(email=email.data).first()
+        user = OracleOrgUser.objects.filter(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
         

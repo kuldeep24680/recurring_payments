@@ -3,7 +3,7 @@ import datetime
 from flask_login import current_user
 
 from oracle import celery
-from organisation.model import OracleOrgCustomer,OracleOrgMerchant
+from organisation.model import OracleOrgCustomer,OracleOrgUser
 from oracle.utils import send_email_mailgun, send_attachment
 from celery.task import periodic_task
 from celery.schedules import crontab
@@ -47,7 +47,7 @@ def subscription_assignment(customer_id):
 @celery.task
 def get_subscription_transaction_id(customer_id):
     customer = OracleOrgCustomer.objects.get(id=customer_id)
-    merchant = OracleOrgMerchant.objects.get(is_head_merchant=True)
+    merchant = OracleOrgUser.objects.get(is_head_merchant=True)
     customer.update(set__is_paying_today = True)
     status, transaction_id = get_recurring_payment_transaction_id(customer.subscription_id)
     if status:
@@ -71,7 +71,7 @@ def subscription_assignment_retry_mechanism():
 
 @periodic_task(run_every=crontab(minute=30, hour=16))
 def fetch_recurring_payment_transaction_details():
-    user = OracleOrgMerchant.objects.get(id=current_user.id)
+    user = OracleOrgUser.objects.get(id=current_user.id)
     today_date = datetime.datetime.now().date().strftime("%d/%m/%Y")
     customers = OracleOrgCustomer.objects.filter(due_date=today_date, payment__payment_mode="subscription")
     if customers.count() > 0:
@@ -83,7 +83,7 @@ def fetch_recurring_payment_transaction_details():
         
 @periodic_task(run_every=crontab(minute=30, hour=18))
 def recurring_payment_merchant_notification():
-    merchant = OracleOrgMerchant.objects.get(is_head_merchant=True)
+    merchant = OracleOrgUser.objects.get(is_head_merchant=True)
     customers = OracleOrgCustomer.objects.filter(payment__is_paying_today=True,
                                                  payment__payment_pending_days__lte=BUFFER_PERIOD)
     # code to generate the report
@@ -108,7 +108,7 @@ def defaultor_check_alert():
     customers = OracleOrgCustomer.objects.filter(payment__is_paying_today=True,
                                                  payment__payment_pending_days=BUFFER_PERIOD,
                                                  payment__is_defaulter=False)
-    merchant = OracleOrgMerchant.objects.get(is_head_merchant=True)
+    merchant = OracleOrgUser.objects.get(is_head_merchant=True)
     today = datetime.datetime.now()
     if customers.count() > 0:
         for customer in customers:

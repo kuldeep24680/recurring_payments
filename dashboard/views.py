@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 from auth.forms import LoginForm, RegistrationForm
 from dashboard.forms import AddOrganisationCustomerForm, AddOrganisationServiceForm
 from oracle import mainapp
-from organisation.model import OracleOrgMerchant, OracleOrgCustomer, OracleOrgServices
+from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices
 from oracle.tasks import subscription_assignment
 
 dashboard_views = Blueprint("dashboard_views", __name__, template_folder="templates")
@@ -23,7 +23,7 @@ def oracle_org_login():
             return redirect(url_for('index'))
         form = LoginForm()
         if form.validate_on_submit():
-            user = OracleOrgMerchant.objects.filter(username=form.username.data).first()
+            user = OracleOrgUser.objects.filter(username=form.username.data).first()
             if user is None or not user.check_password(form.password.data):
                 flash('Invalid username or password')
                 return redirect(url_for('login'))
@@ -48,7 +48,9 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = OracleOrgMerchant(username=form.username.data, email=form.email.data)
+        user = OracleOrgUser.create_user(username=form.username.data,
+                                         email=form.email.data,
+                                         is_head_merchant=form.is_head_merchant.data)
         user.set_password(form.password.data)
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
