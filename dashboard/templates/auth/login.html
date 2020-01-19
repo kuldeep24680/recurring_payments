@@ -1,0 +1,58 @@
+login htmll
+
+{% extends "base_other.html" %}
+
+{% block title %}Login or Register{% endblock %}
+
+{% block maincontents %}
+    <br/>
+
+    <div class="row column-seperation">
+            <h4>Sign in</h4>
+            <form id="login-form" class="login-form" action="/accounts/login" method="post">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul class="flashes list-unstyled alert alert-danger">
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Username</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="email" id="txtusername" class="form-control" placeholder="Please enter username" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Password</label>
+                        <span class="help"></span>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="password" name="password" id="txtpassword" class="form-control" placeholder="Please enter password" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="control-group  col-md-10">
+                        <div class="checkbox checkbox check-success"> <a href="#">Forgot username or password?</a>&nbsp;&nbsp;
+                            <input type="checkbox" id="checkbox1" value="1">
+                            <label for="checkbox1">Keep me reminded </label>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" value="ORG_SO" name="role">
+                <div class="row">
+                    <div class="col-md-10">
+                        <button class="btn btn-small btn-g-success btn-raised ripple-effect btn-cons pull-right" type="submit" style="margin-right: 0px;">Login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

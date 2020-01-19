@@ -8,20 +8,18 @@ from oracle import mainapp
 from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices
 from oracle.tasks import subscription_assignment
 
-dashboard_views = Blueprint("dashboard_views", __name__, template_folder="templates")
+auth_views = Blueprint("auth_views", __name__, template_folder="templates")
 
 
-
-@dashboard_views.route('/login', methods=['GET', 'POST'])
+@auth_views.route('/login', methods=['GET', 'POST'])
 def oracle_org_login():
-    if request.method == "GET":
-        return render_template('templates/forgot_password.html')
-    
+    print("yes")
+    if current_user.is_authenticated():
+        return render_template("auth/login.html")
     if request.method == "POST":
-        
         if current_user.is_authenticated:
             return redirect(url_for('index'))
-        form = LoginForm()
+        form = LoginForm(request.form)
         if form.validate_on_submit():
             user = OracleOrgUser.objects.filter(username=form.username.data).first()
             if user is None or not user.check_password(form.password.data):
@@ -29,6 +27,8 @@ def oracle_org_login():
                 return redirect(url_for('login'))
             return redirect(url_for('index'))
         return render_template('templates/forgot_password.html', title='Sign In', form=form)
+    kwargs = locals()
+    return render_template("auth/login.html", **kwargs)
     
 # @mainapp.route('/reset_password', method=['POST'])
 # def reset_password():

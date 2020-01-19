@@ -3,11 +3,12 @@ import datetime
 from flask_login import current_user
 
 from oracle import celery
+from oracle.job import make_celery
 from organisation.model import OracleOrgCustomer,OracleOrgUser
 from oracle.utils import send_email_mailgun, send_attachment
 from celery.task import periodic_task
 from celery.schedules import crontab
-from oracle.local_config import BUFFER_PERIOD
+from oracle.local_config import BUFFER_PERIOD, CELERY_SETTINGS
 from payment_modes.credit_card.create_subscription import create_subscription
 from payment_modes.credit_card.get_subscription_payment_details import get_recurring_payment_transaction_id
 from reports.utils import generate_customer_payment_report
@@ -16,7 +17,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-
+celery = make_celery(
+    "oracle.tasks",
+    CELERY_SETTINGS["CELERY_broker_url"],
+    CELERY_SETTINGS["CELERY_result_backend"],
+)
+celery.autodiscover_tasks(["oracle"])
 
 def payment_confirmation_mail(merchant_email_id, customer_id):
     customer = OracleOrgCustomer.objects.get(id=customer_id)
@@ -42,6 +48,7 @@ def subscription_assignment(customer_id):
     status, subscription_id = create_subscription(**kwargs)
     if status:
         customer.update(set__subscription_id=subscription_id)
+        customer.update(set__was_subscribed=True)
         
         
 @celery.task
@@ -63,7 +70,7 @@ def get_subscription_transaction_id(customer_id):
         
 @periodic_task(run_every=crontab(minute=45, hour=20))
 def subscription_assignment_retry_mechanism():
-    customers = OracleOrgCustomer.objects.filter(subscription_id=None)
+    customers = OracleOrgCustomer.objects.filter(subscription_id=None, was_subscribed=False)
     if customers.count > 0:
         for customer in customers:
             subscription_assignment.delay(customer.id)

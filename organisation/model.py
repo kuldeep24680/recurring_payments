@@ -3,49 +3,29 @@ from mongoengine import (
     BooleanField,
     DateTimeField)
 
-from organisation.base_model import OracleDocumentABC
+from organisation.base_model import OracleDocumentABC, BaseUser
 from oracle import db
 from oracle.utils import generate_bcrypt_hash
 import datetime
 import bcrypt
+from flask_login import UserMixin
 
 
-class OracleOrgUser(OracleDocumentABC):
-    name = db.StringField()
-    username = db.StringField(max_length=255, required=True)
+class OracleOrgUser(BaseUser):
+    username = db.StringField(max_length=255)
     email_id = db.StringField(max_length=255, required=True)
-    password = db.StringField(max_length=128, required=True)
     created_at = db.DateTimeField()
     is_head_merchant = BooleanField(default=False)
     is_admin = BooleanField(default=False)
     
-    meta = {"abstract": True}
-
-    def set_password(self, raw_password):
-        """Sets the user's password - always use this rather than directly
-        assigning to :attr:`~mongoengine.django.auth.User.password` as the
-        password is hashed before storage.
-        """
-        self.password = generate_bcrypt_hash(raw_password)
-
-    def check_password(self, raw_password):
-        """Checks the user's password against a provided password - always use
-        this rather than directly comparing to
-        :attr:`~mongoengine.django.auth.User.password` as the password is
-        hashed before storage.
-        """
-
-        return str(self.password).encode() == bcrypt.hashpw(
-            str(raw_password).encode("utf-8"), str(self.password).encode("utf-8")
-        )
 
     @classmethod
-    def create_user(cls, username, password, email_id, is_head_merchant=False):
+    def create_user(cls, username, password, email_id, is_head_merchant=False,is_admin=False):
         now = datetime.datetime.utcnow()
         user = OracleOrgUser(username=username, email_id=email_id, created_at=now)
         user.set_password(password)
         user.is_head_merchant = is_head_merchant
-        user.save()
+        user.is_admin=is_admin
         return user
 
 
@@ -59,6 +39,7 @@ class OracleOrgAvailableOffer(db.EmbeddedDocument):
 class OracleOrgServices(OracleDocumentABC):
     service_name = db.StringField()
     service_cost_per_month = db.FloatField()
+    
     discount_offers = db.EmbeddedDocumentField(OracleOrgAvailableOffer, default=OracleOrgAvailableOffer)
 
     
@@ -89,4 +70,6 @@ class OracleOrgCustomer(OracleDocumentABC):
     service = db.ReferenceField(OracleOrgServices)
     payment = db.EmbeddedDocumentField(OracleOrgPayment, default=OracleOrgPayment)
     subscription_id = db.StringField()
+    was_subscribed = db.BooleanField(default=False)
+    is_active = db.BooleanField(default=False)
     card_details = db.EmbeddedDocumentField(OracleOrgCreditCardDetails, default=OracleOrgCreditCardDetails)

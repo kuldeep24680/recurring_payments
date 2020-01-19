@@ -6,7 +6,7 @@ MONGODB_SETTINGS = {
     "DB": "oracle-products-dev",
     "PORT": 27017,
     "HOST": "localhost",
-    "connect": False,
+    "connect": True,
 }
 
 AWS_SETTINGS = {
@@ -35,6 +35,11 @@ CELERY_SETTINGS = {
         RABBIT_MQ_SERVER, RABBIT_MQ_PORT
     ),
     "CELERY_enable_utc": False,
+}
+
+ADMIN = {
+    "email_id" : "admin@oracleproducts.com",
+    "password" : "oracle@123"
 }
 
 

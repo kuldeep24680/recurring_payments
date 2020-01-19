@@ -1,10 +1,15 @@
 from __future__ import absolute_import
 import datetime
 import logging
+
+import bcrypt
+from flask_login import UserMixin
+
 from oracle import db
 import mongoengine.signals as mongoengine_signals
-from mongoengine import DateTimeField
+from mongoengine import DateTimeField, Document, StringField
 
+from oracle.utils import generate_bcrypt_hash
 
 logger = logging.getLogger(__name__)
 
@@ -54,3 +59,40 @@ def attach_signal_to_all_subclasses():
     """
     for subclass in get_subclasses(OracleDocumentABC):
         mongoengine_signals.pre_save.connect(update_modified, subclass)
+
+
+class BaseUser(db.Document, UserMixin):
+    email = StringField(unique=True)
+    password = StringField(max_length=128)
+
+    meta = {"abstract": True}
+
+    def set_password(self, raw_password):
+        """Sets the user's password - always use this rather than directly as the
+        password is hashed before storage.
+        """
+        self.password = generate_bcrypt_hash(raw_password)
+
+    def check_password(self, raw_password):
+        """Checks the user's password against a provided password - always use
+        this rather than directly comparing to
+        :attr:`~mongoengine.django.auth.User.password` as the password is
+        hashed before storage.
+        """
+
+        return str(self.password).encode() == bcrypt.hashpw(
+            str(raw_password).encode("utf-8"), str(self.password).encode("utf-8")
+        )
+
+    @classmethod
+    def create_user(cls, name, email, password):
+        try:
+            email_name, domain_part = email.strip().split("@", 1)
+        except ValueError:
+            pass
+        else:
+            email = "@".join([email_name.lower(), domain_part.lower()])
+
+        user = BaseUser(first_name=name, email=email)
+        user.set_password(password)
+        return user

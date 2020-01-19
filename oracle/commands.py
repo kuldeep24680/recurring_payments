@@ -1,8 +1,30 @@
+import datetime
+
 from flask_script import Command, prompt_bool
 from oracle import local_config as settings
 from oracle import db
+from oracle.local_config import ADMIN, MONGODB_SETTINGS
 from oracle.services import logger
+from oracle.utils import generate_bcrypt_hash
 from organisation.model import OracleOrgUser, OracleOrgCustomer
+
+
+
+class InitDB(Command):
+    """Initialize new database."""
+
+    def run(self):
+        dbname = MONGODB_SETTINGS["DB"]
+        user = OracleOrgUser.create_user(
+            username = "oracle admin",
+            password = ADMIN["password"],
+            email_id = ADMIN["email_id"],
+            is_head_merchant = False,
+            is_admin = True,
+        )
+        user.save()
+        print("creating database {database} successful.".format(database=dbname))
+
 
 
 class DropDB(Command):
@@ -34,6 +56,6 @@ class DescDB(Command):
 
 
 def add_commands(manager):
-    manager.add_command("dropdb", DropDB())
+    manager.add_command("initdb", InitDB())
     #    manager.add_command( 'dropdb', DropDB())
     manager.add_command("descdb", DescDB())
