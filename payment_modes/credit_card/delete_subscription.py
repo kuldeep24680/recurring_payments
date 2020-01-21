@@ -1,9 +1,7 @@
 import os, sys
-import imp
-
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import *
-from oracle.local_config import AUTHORIZE_CREDENTIALS
+from oracle.settings import AUTHORIZE_CREDENTIALS
 
 
 def cancel_subscription(subscriptionId):

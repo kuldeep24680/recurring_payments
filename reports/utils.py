@@ -1,5 +1,8 @@
 import tempfile
+
+from organisation.model import OracleOrgMonthlyGraduatedCustomers
 from  reports.report_definition.customer_report import PAYMENT_DICT
+from reports.report_definition.graduate_customer_report import CUSTOMER_DICT
 from reports.report_generation import xlsx_report_writer
 
 
@@ -31,4 +34,39 @@ def generate_customer_payment_report(today,customers):
     report_name = xlsx_report_writer(
         required_payments, PAYMENT_DICT, filename
     )
+    return True, report_name
+
+
+def generate_monthly_graduated_customer_report(start_date, end_date):
+    """
+    generates graduate monthly customer report
+    :param start_date:
+    :param end_date:
+    :return: status,report
+    """
+    customers = OracleOrgMonthlyGraduatedCustomers.objects.filter(start_date__gte=start_date,due_date__lte=end_date)
+    required_details = list()
+    if customers.count==0:
+        return False, ""
+    for customer in customers:
+        customer_dict = dict()
+        customer_dict["first_name"] = customer.first_name
+        customer_dict["last_name"] = customer.last_name
+        customer_dict["subscription_type"] = customer.subscription_type
+        customer_dict["email_id"] = customer.email_id
+        customer_dict["service_name"] = customer.service_name
+        customer_dict["service_code"] = customer.service_code
+        customer_dict["payment_status"] = "Paid"
+        customer_dict["payment_mode"] = customer.payment_mode
+        customer_dict["paid_amount"] = customer.paid_amount
+        customer_dict["start_date"] = customer.start_date.strftime("%d/%m/%Y")
+        customer_dict["due_date"] = customer.due_date.strftime("%d/%m/%Y")
+        customer_dict["phone_number"] = customer.phone_number
+        
+        required_details.append(customer_dict)
+    tmp_dir = tempfile.mkdtemp(prefix="graduate_customer")
+    filename = "{}/graduate_customer_report_{}_to_{}.xlsx".format(
+        tmp_dir, start_date.date(), end_date.date()
+    )
+    report_name = xlsx_report_writer(required_details, CUSTOMER_DICT, filename)
     return True, report_name

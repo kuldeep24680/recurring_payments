@@ -1,11 +1,8 @@
-import datetime
-
 from flask_script import Command, prompt_bool
-from oracle import local_config as settings
+from oracle import settings
 from oracle import db
-from oracle.local_config import ADMIN, MONGODB_SETTINGS
+from oracle.settings import ADMIN, MONGODB_SETTINGS
 from oracle.services import logger
-from oracle.utils import generate_bcrypt_hash
 from organisation.model import OracleOrgUser, OracleOrgCustomer
 
 

@@ -1,21 +1,9 @@
-import bcrypt
 import requests
 from flask import request
 from flask_mongoengine import Pagination
-
-from oracle.local_config import *
+from oracle.settings import SANDBOX, KEY
 from oracle.services import upload_to_s3_filename, get_presigned_url
-
-
-
-def generate_bcrypt_hash(raw_password):
-    """
-    generates the encrypted hash
-    :param raw_password:
-    :return: The Bcrypt hash
-    """
-    result = bcrypt.hashpw(str(raw_password).encode("utf-8"), bcrypt.gensalt())
-    return result.decode("utf-8")
+from organisation.model import OracleOrgMonthlyGraduatedCustomers
 
 
 def send_email_mailgun(subject, template, recipient, cc_recipient=None):
@@ -81,5 +69,24 @@ def for_pagination(object_list):
         per_page=per_page,
     )
     return pagination, object_list, offset
+
+
+def monthly_graduate_customer_creation(customer):
+    graduate_customer = OracleOrgMonthlyGraduatedCustomers(email_id=customer.email_id,
+                                                           start_date = customer.start_date,
+                                                           due_date = customer.due_date)
+    graduate_customer.subscription_type = customer.subscription_type
+    graduate_customer.first_name = customer.first_name
+    graduate_customer.last_name = customer.last_name
+    graduate_customer.service_name = customer.service.service_name
+    graduate_customer.service_code = customer.service.code
+    graduate_customer.paid_amount = customer.payment.due_payment
+    graduate_customer.payment_status = "Paid"
+    graduate_customer.payment_mode = customer.payment.payment_mode
+    graduate_customer.phone_number = customer.phone_number
+    graduate_customer.save()
+
+    
+    
 
 

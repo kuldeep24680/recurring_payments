@@ -1,7 +1,10 @@
+import logging
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import *
 from decimal import *
-from oracle.local_config import AUTHORIZE_CREDENTIALS
+from oracle.settings import AUTHORIZE_CREDENTIALS
+
+logger = logging.getLogger(__name__)
 
 
 def get_recurring_payment_transaction_id(subscription_id):
@@ -19,11 +22,15 @@ def get_recurring_payment_transaction_id(subscription_id):
     response = getSubscriptionController.getresponse()
 
     if response.messages.resultCode== "Ok":
-        for transaction in response.subscription.arbTransactions.arbTransaction:
-            print("Transaction id: %d" % transaction.transId)
-            transaction_id = transaction.transId
-            status = True
-            
+        # if there are no past transactions, arbTransactions will not exist, error should be handled.
+        try:
+            for transaction in response.subscription.arbTransactions.arbTransaction:
+                print("Transaction id: %d" % transaction.transId)
+                transaction_id = transaction.transId
+                status = True
+        except Exception as err:
+            logger.error(err)
+            transaction_id = ''
     else:
         print("response code: %s" % response.messages.resultCode)
         transaction_id = ''

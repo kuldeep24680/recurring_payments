@@ -1,3 +1,5 @@
+import datetime
+
 from flask import url_for, render_template, flash, request, Blueprint
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.utils import redirect
@@ -7,8 +9,9 @@ from dashboard.forms import AddOrganisationCustomerForm, AddOrganisationServiceF
 from oracle.utils import for_pagination
 from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices
 from dashboard.forms import subscription_type_list, boolean_type_list
-from oracle.tasks import subscription_assignment, cancel_customer_subscription_service
-from payment_modes.credit_card.delete_subscription import cancel_subscription
+from oracle.tasks import subscription_assignment, cancel_customer_subscription_service, \
+    monthly_graduated_customer_report
+
 
 auth_views = Blueprint("auth_views", __name__, template_folder="templates")
 
@@ -122,7 +125,6 @@ def oracle_org_customer_update(customer_id):
         )
 
 
-
 @auth_views.route("/customers", methods=["GET"])
 @login_required
 def oracle_org_customers():
@@ -186,3 +188,29 @@ def oracle_org_services():
         services = OracleOrgServices.objects.filter()
         kwargs = locals()
         return render_template("services/service_creation.html", **kwargs)
+    
+    
+@auth_views.route("/report", methods=["GET", "POST"])
+@login_required
+def oracle_org_report_analysis():
+    
+    if request.method == "GET":
+        user = OracleOrgUser.objects.get(id=current_user.id)
+        kwargs = locals()
+        return render_template("reports/reports.html", **kwargs)
+    
+    if request.method == "POST":
+        user = OracleOrgUser.objects.get(id=current_user.id)
+        start_date = datetime.datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+        monthly_graduated_customer_report(user.id,start_date,end_date)
+        
+        flash(
+            "Report is being generated. It will be sent to your registered email Id {}.If this is not the correct email ID, please contact your administrator to update your email ID.".format(
+                user.email_id
+            ),
+            "success",
+        )
+        return redirect(url_for("auth_views.oracle_org_report_analysis"))
+        
+

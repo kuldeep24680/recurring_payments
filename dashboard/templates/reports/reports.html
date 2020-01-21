@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block css_sheets %}
+    <style type="text/css">
+        .container-fluid{
+            background-color: #fff;
+            margin-bottom: 15px;
+            padding: 18px;
+            border-radius: 2px;
+        }
+        .form-control{
+            border:1px solid #a0a7ac !important;
+        }
+
+    </style>
+{% endblock %}
+{% block maincontents %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes list-unstyled alert alert-danger">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endwith %}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 form-group">
+            <h3><span class="semi-bold">Reports</span></h3>
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-xs-12 form-group">
+            <h4>Customer Report</h4>
+        </div>
+        <div class="input-daterange">
+            <form method="post" class="form-no-horizontal-spacing" action="{{ url_for('auth_views.oracle_org_report_analysis') }}">
+                <div class="col-md-2 col-xs-12 reports-align">
+                    <input type="date" class="input-small form-control date-picker start-date-customer-report" name="start_date" placeholder="start-date" />
+                </div>
+                <div class="col-md-2 col-xs-12 reports-align">
+                    <input type="date" class="input-small form-control date-picker end-date-customer-report" name="end_date" placeholder="end-date" />
+                </div>
+
+                <div class="col-md-3 reports-align">
+                    <button class="btn btn-block btn-medium btn-md btn-unassign btn-raised ripple-effect" id="generate_button" type="submit">
+                        <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
+                        Generate Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    </div>
+
+</div>
+{% endblock %} {% block js_scripts %}{{ super() }}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.form-no-horizontal-spacing').each(function(key, form) {
+            $(form).validate({
+                errorElement: 'span',
+                errorClass: 'error',
+                focusInvalid: false,
+                ignore: "",
+                rules: {
+                    start_date: {
+                        required: true,
+                    },
+                    end_date: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    start_date: {
+                        required: "This is field is required",
+                    },
+                    end_date: {
+                        required: "This is field is required",
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    //display error alert on form submit
+                },
+                highlight: function(element) { // hightlight error inputs
+                    var parent = $(element).parent();
+                    parent.removeClass('success-control').addClass('error-control');
+                },
+                unhighlight: function(element) { // revert the change done by hightlight
+
+                },
+                success: function(label, element) {
+                    var parent = $(element).parent('.col-md-3');
+                    parent.removeClass('error-control').addClass('success-control');
+                },
+            })
+        });
+
+
+
+        $("#generate_button").click(function() {
+            checkDateRange($("#start-date").val(), $("#end-date").val())
+        });
+
+        function checkDateRange(start, end) {
+            // Check the date range, 86400000 is the number of milliseconds in one day
+            var difference = (endDate - startDate) / (86400000 * 7);
+            if (difference < 0) {
+                Messenger().post("The start date must come before the end date!...");
+                return false;
+
+            }
+            if (endDate - today > 0) {
+                Messenger().post("End date cannot be greater than today!...");
+                return false;
+            }
+            return true;
+        }
+    });
+</script>
+{% endblock %}

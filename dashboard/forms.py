@@ -75,9 +75,9 @@ class AddOrganisationCustomerForm(Form):
         cust.last_name = self.last_name.data
         cust.phone_number = self.phone_number.data
         cust.subscription_type = self.subscription_type.data
-        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d').strftime("%d/%m/%Y")
+        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d')
         due_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
-        cust.due_date = due_date.strftime("%d/%m/%Y")
+        cust.due_date = due_date.date()
         cust.service = service
         cust.payment_mode = self.payment_mode.data
         cust.created_at = datetime.datetime.now()
@@ -106,9 +106,9 @@ class AddOrganisationCustomerForm(Form):
         cust.last_name = self.last_name.data
         cust.phone_number = self.phone_number.data
         cust.subscription_type = self.subscription_type.data
-        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%d/%m/%Y').strftime("%d/%m/%Y")
-        due_date = datetime.datetime.strptime(self.start_date.data, '%d/%m/%Y') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
-        cust.due_date = due_date.strftime("%d/%m/%Y")
+        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d')
+        due_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
+        cust.due_date = due_date.date()
         cust.service = service
         cust.payment_mode = self.payment_mode.data
         cust.payment = OracleOrgPayment(

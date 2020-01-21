@@ -4,7 +4,7 @@ from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
 from celery import Celery
 
-from oracle.local_config import MONGODB_SETTINGS, CELERY_SETTINGS, AWS_SETTINGS
+from oracle.settings import MONGODB_SETTINGS, CELERY_SETTINGS, AWS_SETTINGS
 
 mainapp = Flask(__name__)
 

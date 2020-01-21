@@ -2,7 +2,7 @@ from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import *
 from decimal import *
 from datetime import *
-from oracle.local_config import AUTHORIZE_CREDENTIALS
+from oracle.settings import AUTHORIZE_CREDENTIALS
 
 
 def create_subscription(**kwargs):

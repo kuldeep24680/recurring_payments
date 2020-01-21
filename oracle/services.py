@@ -1,9 +1,9 @@
-from oracle import mainapp
+import re
 import boto3
 import logging
 from botocore.exceptions import ClientError
-from oracle.local_config import AWS_SETTINGS
-import re
+from oracle.settings import AWS_SETTINGS
+
 
 logger = logging.getLogger(__name__)
 

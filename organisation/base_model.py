@@ -7,9 +7,9 @@ from flask_login import UserMixin
 
 from oracle import db
 import mongoengine.signals as mongoengine_signals
-from mongoengine import DateTimeField, Document, StringField
+from mongoengine import DateTimeField, StringField
 
-from oracle.utils import generate_bcrypt_hash
+from organisation.utils import generate_bcrypt_hash
 
 logger = logging.getLogger(__name__)
 

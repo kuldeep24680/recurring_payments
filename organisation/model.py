@@ -1,14 +1,8 @@
 from mongoengine import (
     StringField,
-    BooleanField,
-    DateTimeField)
-
+    BooleanField)
 from organisation.base_model import OracleDocumentABC, BaseUser
 from oracle import db
-from oracle.utils import generate_bcrypt_hash
-import datetime
-import bcrypt
-from flask_login import UserMixin
 
 
 class OracleOrgUser(BaseUser):
@@ -47,11 +41,27 @@ class OracleOrgCustomer(OracleDocumentABC):
     email_id = db.StringField(max_length=255, required=True,unique=True)
     phone_number = db.StringField()
     subscription_type = db.StringField()
-    start_date = db.StringField()
-    due_date = db.StringField()
+    start_date = db.DateTimeField()
+    due_date = db.DateTimeField()
     service = db.ReferenceField(OracleOrgServices)
     payment = db.EmbeddedDocumentField(OracleOrgPayment, default=OracleOrgPayment)
     subscription_id = db.StringField()
     was_subscribed = db.BooleanField(default=False)
     is_active = db.BooleanField(default=False)
     card_details = db.EmbeddedDocumentField(OracleOrgCreditCardDetails, default=OracleOrgCreditCardDetails)
+
+
+class OracleOrgMonthlyGraduatedCustomers(OracleDocumentABC):
+    first_name = db.StringField()
+    last_name = db.StringField()
+    email_id = db.StringField(max_length=255)
+    phone_number = db.StringField()
+    subscription_type = db.StringField()
+    start_date = db.DateTimeField()
+    due_date = db.DateTimeField()
+    service_code = db.StringField()
+    service_name = db.StringField()
+    paid_amount = db.FloatField()
+    payment_mode = db.StringField()
+    payment_status = db.StringField()
+    
