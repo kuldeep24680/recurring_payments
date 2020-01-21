@@ -7,6 +7,7 @@ from oracle.local_config import *
 from oracle.services import upload_to_s3_filename, get_presigned_url
 
 
+
 def generate_bcrypt_hash(raw_password):
     """
     generates the encrypted hash
@@ -80,4 +81,5 @@ def for_pagination(object_list):
         per_page=per_page,
     )
     return pagination, object_list, offset
+
 

@@ -14,7 +14,7 @@ from wtforms import SelectMultipleField, Form
 from wtforms import validators as v
 
 from organisation.model import OracleOrgCustomer, OracleOrgPayment, OracleOrgServices, OracleOrgCreditCardDetails
-from payment_modes.credit_card.delete_subscription import delete_subscription
+
 
 subscription_type_list = [
     {"id": '1', "value": "Monthly"},
@@ -125,13 +125,8 @@ class AddOrganisationCustomerForm(Form):
             card_number=self.card_number.data,
             expiration_date=self.expiration_date.data
         )
-        cancel_subcription = self.cancel_subcription.data
-        if cancel_subcription:
-            cust.subscription_id = None
-            
         cust.save()
         return cust
-
 
 
 class AddOrganisationServiceForm(Form):

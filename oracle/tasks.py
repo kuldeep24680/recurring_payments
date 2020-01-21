@@ -1,5 +1,6 @@
 import datetime
 
+from celery import Celery
 from flask_login import current_user
 
 from oracle import mainapp
@@ -10,6 +11,7 @@ from celery.task import periodic_task
 from celery.schedules import crontab
 from oracle.local_config import BUFFER_PERIOD, CELERY_SETTINGS
 from payment_modes.credit_card.create_subscription import create_subscription
+from payment_modes.credit_card.delete_subscription import cancel_subscription
 from payment_modes.credit_card.get_subscription_payment_details import get_recurring_payment_transaction_id
 from reports.utils import generate_customer_payment_report
 import logging
@@ -17,21 +19,26 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-celery = make_celery(
-    "oracle.tasks",
-    mainapp.config["CELERY_broker_url"],
-    mainapp.config["result_backend"],
-)
-celery.autodiscover_tasks(["oracle"])
+# celery = make_celery(
+#     "oracle.tasks",
+#     mainapp.config["CELERY_broker_url"],
+#     mainapp.config["result_backend"],
+# )
+# celery.autodiscover_tasks(["oracle"])
+
+celery = Celery("oracle.tasks",
+             backend='rpc://',
+             broker='pyamqp://guest@localhost//')
+celery.conf.update(mainapp.config)
 
 
 def payment_confirmation_mail(merchant_email_id, customer_id):
-    customer = OracleOrgCustomer.objects.get(id=customer_id)
-    start_date = customer.start_date.strftime("%d/%m/%Y")
-    end_date = customer.due_date.strftime("%d/%m/%Y")
+    customer = OracleOrgCustomer.objects.get(id=str(customer_id))
+    start_date = customer.start_date
+    end_date = customer.due_date
     body = f"Thanks for choosing our service {customer.service.service_name}! Amount {customer.payment.due_payment} has been charged for duration {start_date} to {end_date} via credit card payments.Look forward to serving you."
     header = "Payment Confirmation"
-    send_email_mailgun(header, body, customer.email, merchant_email_id)
+    send_email_mailgun(header, body, customer.email_id, merchant_email_id)
 
 
 @celery.task
@@ -71,20 +78,19 @@ def get_subscription_transaction_id(customer_id):
         
 @periodic_task(run_every=crontab(minute=45, hour=20))
 def subscription_assignment_retry_mechanism():
-    customers = OracleOrgCustomer.objects.filter(subscription_id=None, was_subscribed=False)
+    customers = OracleOrgCustomer.objects.filter(subscription_id=None, was_subscribed=False, is_active=True)
     if customers.count > 0:
         for customer in customers:
-            subscription_assignment.delay(customer.id)
+            subscription_assignment.delay(str(customer.id))
 
 
 @periodic_task(run_every=crontab(minute=30, hour=16))
 def fetch_recurring_payment_transaction_details():
-    user = OracleOrgUser.objects.get(id=current_user.id)
     today_date = datetime.datetime.now().date().strftime("%d/%m/%Y")
-    customers = OracleOrgCustomer.objects.filter(due_date=today_date, payment__payment_mode="subscription")
+    customers = OracleOrgCustomer.objects.filter(due_date=today_date, payment__payment_mode="subscription",is_active=True)
     if customers.count() > 0:
         for customer in customers:
-            get_subscription_transaction_id.delay(customer.id)
+            get_subscription_transaction_id.delay(str(customer.id))
     else:
         logger.info("No payments to made today")
         
@@ -93,7 +99,8 @@ def fetch_recurring_payment_transaction_details():
 def recurring_payment_merchant_notification():
     merchant = OracleOrgUser.objects.get(is_head_merchant=True)
     customers = OracleOrgCustomer.objects.filter(payment__is_paying_today=True,
-                                                 payment__payment_pending_days__lte=BUFFER_PERIOD)
+                                                 payment__payment_pending_days__lte=BUFFER_PERIOD,
+                                                 is_active=True)
     # code to generate the report
     today = datetime.datetime.now()
     if customers.count() > 0:
@@ -102,34 +109,47 @@ def recurring_payment_merchant_notification():
         )
         graduated_customer = customers.filter(payment__payment_status=True)
         for customer in graduated_customer:
-            type = customer.subscription_type
+            type = int(customer.subscription_type)
+            due_date = datetime.date.today() + datetime.timedelta(type * 365 / 12)
             customer.update(set__payment__is_paying_today=False)
-            customer.update(set__payment_pending_days=0)
-            customer.update(set__start_date=today)
-            customer.update(set__due_date=datetime.date.today() + datetime.timedelta(type * 365 / 12))
+            customer.update(set__payment__payment_pending_days=0)
+            customer.update(set__start_date=today.strftime('%d/%m/%Y'))
+            customer.update(set__due_date=due_date.strftime('%d/%m/%Y'))
         if status:
-            send_attachment(report_name, f"Subscription Payment Report {today.date()}", merchant.email)
+            send_attachment(report_name, f"Subscription Payment Report {today.date()}", merchant.email_id)
     
 
 @periodic_task(run_every=crontab(minute=00, hour=19))
 def defaultor_check_alert():
     customers = OracleOrgCustomer.objects.filter(payment__is_paying_today=True,
-                                                 payment__payment_pending_days=BUFFER_PERIOD,
-                                                 payment__is_defaulter=False)
+                                                 payment__payment_pending_days__gte=BUFFER_PERIOD,
+                                                 payment__is_defaulter=False,
+                                                 is_active=True)
     merchant = OracleOrgUser.objects.get(is_head_merchant=True)
     today = datetime.datetime.now()
     if customers.count() > 0:
         for customer in customers:
-            customer.set(set__is_defaulter=True)
+            customer.update(set__payment__is_defaulter=True)
         
         status, report_name = generate_customer_payment_report(
             today, customers
         )
         if status:
-            send_attachment(report_name, f"Payment Defaulter Report {today.date()}", merchant.email)
+            send_attachment(report_name, f"Payment Defaulter Report {today.date()}", merchant.email_id)
             
-    
-    
+            
+@celery.task
+def cancel_customer_subscription_service(customer_id):
+    cust = OracleOrgCustomer.objects.get(id=str(customer_id))
+    subscription_id = cust.subscription_id
+    if subscription_id:
+        status = cancel_subscription(str(subscription_id))
+        if status:
+            cust.subscription_id = None
+            cust.save()
+            logger.info("Subscription for customer {} has been cancelled.".format(cust.email_id))
+        else:
+            logger.error("Subscription for customer {} could not be cancelled.".format(cust.email_id))
         
         
     

@@ -178,7 +178,8 @@
                                                     <th class="text-center">Service Code</th>
                                                     <th class="text-center">Cost Per Month</th>
                                                     <th class="text-center">Is Any Offer Available?</th>
-                                                     <th class="text-center">Discount Percentage</th>
+                                                    <th class="text-center">Discount Percentage</th>
+                                                    <th class="text-center">Wish to delete?</th>
 
                                                 </thead>
                                                 <tbody>
@@ -190,6 +191,8 @@
                                                             <td class="text-left" >{{ service.service_cost_per_month  }}</td>
                                                             <td class="text-right">{{ service.is_offer_available }}</td>
                                                             <td class="text-right">{{ service.discount_percent }}</td>
+                                                            <td class="text-center"><a href="{{ url_for('auth_views.oracle_org_delete_service', service_id=service.id) }}"><span class="title" style="color:red;">DELETE</span></a></td>
+
 
                                                         </tr>
                                                     {% endfor %}

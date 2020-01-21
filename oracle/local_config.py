@@ -1,6 +1,7 @@
 
-SANDBOX = "transaction-email.oracleproducts.com"
-KEY = "c37ce326adfc744ff27f31dabaa7153d-0a4b0c40-49167757"
+KEY = 'd413519f1bda2c8d7a700aab95cdef57-f7910792-ee3b91ed'
+SANDBOX = 'transaction-email.esthenos.com'
+
 BUFFER_PERIOD = 5
 MONGODB_SETTINGS = {
     "DB": "oracle-products-dev",
@@ -10,14 +11,19 @@ MONGODB_SETTINGS = {
 }
 
 AWS_SETTINGS = {
-    "AWS_CDN_PATH": "s3.ap-south-1.amazonaws.com",
-    "AWS_S3_BUCKET": "midland-test",
-    "AWS_REGION": "ap-south-1",
-    "AWS_COGNITO_ID": "ap-south-1:21f42969-f6bf-4f81-b673-1859223d9ba6",
-    "AWS_COGNITO_PROVIDER_ID": "com.esthenos.midland",
-    "AWS_ACCESS_KEY_ID": "AKIAIFWIECXTMBUKIJGA",
-    "AWS_SECRET_ACCESS_KEY": "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",
+  'AWS_CDN_PATH' : 's3.ap-south-1.amazonaws.com',
+  'AWS_S3_BUCKET' : 'esthenos-northernarc-test',
+  'AWS_COGNITO_ID' : 'ap-south-1:80af4439-f24e-4fa7-8869-a50dc896f8fd',
+  'AWS_ACCESS_KEY_ID' : 'AKIATM6KAUK6CYGNT5ON',
+  'AWS_SECRET_ACCESS_KEY' : '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',
+  'AWS_REGION':'ap-south-1',
+  'AWS_COGNITO_PROVIDER_ID':'com.esthenos.conatus',
+  'StreamName': 'esthenos-northernarc-dev',
+  'Shard': 1,
+  'PartitionKey': 'EsthenosNorthernArc'
+
 }
+
 
 AUTHORIZE_CREDENTIALS = {
     "api_login_name": "8HtWfmFw2k6j",
@@ -34,7 +40,7 @@ CELERY_SETTINGS = {
     "result_backend": "amqp://oracle-task:oracle@{}:{}//oracle-task".format(
         RABBIT_MQ_SERVER, RABBIT_MQ_PORT
     ),
-    "CELERY_enable_utc": False,
+    
 }
 
 ADMIN = {

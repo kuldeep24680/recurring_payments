@@ -235,6 +235,7 @@
                                                      <th class="text-center">Service Name</th>
                                                     <th class="text-center">Due Date</th>
                                                     <th class="text-center">Due Amount</th>
+                                                    <th class="text-center">Wish to delete?</th>
 
                                                 </thead>
                                                 <tbody>
@@ -248,6 +249,7 @@
                                                             <td class="text-right">{{ customer.service.service_name }}</td>
                                                             <td class="text-right">{{ customer.due_date }}</td>
                                                             <td class="text-left">{{ customer.payment.due_payment }}</td>
+                                                            <td class="text-center"><a href="{{ url_for('auth_views.oracle_org_delete_customer', customer_id=customer.id) }}"><span class="title" style="color:red;">DELETE</span></a></td>
 
 
                                                         </tr>
