@@ -2,7 +2,7 @@ import datetime
 
 from flask_login import current_user
 
-from oracle import celery
+from oracle import mainapp
 from oracle.job import make_celery
 from organisation.model import OracleOrgCustomer,OracleOrgUser
 from oracle.utils import send_email_mailgun, send_attachment
@@ -19,10 +19,11 @@ logger = logging.getLogger(__name__)
 
 celery = make_celery(
     "oracle.tasks",
-    CELERY_SETTINGS["CELERY_broker_url"],
-    CELERY_SETTINGS["CELERY_result_backend"],
+    mainapp.config["CELERY_broker_url"],
+    mainapp.config["result_backend"],
 )
 celery.autodiscover_tasks(["oracle"])
+
 
 def payment_confirmation_mail(merchant_email_id, customer_id):
     customer = OracleOrgCustomer.objects.get(id=customer_id)
@@ -40,14 +41,14 @@ def subscription_assignment(customer_id):
         "first_name": customer.first_name,
         "last_name": customer.last_name,
         "due_amount": customer.payment.due_payment,
-        "number_days": int(customer.subscription_type*30),
+        "number_days": int(customer.subscription_type)*30,
         "start_date": customer.start_date,
         "card_number": customer.card_details.card_number,
         "expiration_date": customer.card_details.expiration_date
     }
     status, subscription_id = create_subscription(**kwargs)
     if status:
-        customer.update(set__subscription_id=subscription_id)
+        customer.update(set__subscription_id=str(subscription_id))
         customer.update(set__was_subscribed=True)
         
         
@@ -105,7 +106,7 @@ def recurring_payment_merchant_notification():
             customer.update(set__payment__is_paying_today=False)
             customer.update(set__payment_pending_days=0)
             customer.update(set__start_date=today)
-            customer.update(set__end_date=datetime.date.today() + datetime.timedelta(type * 365 / 12))
+            customer.update(set__due_date=datetime.date.today() + datetime.timedelta(type * 365 / 12))
         if status:
             send_attachment(report_name, f"Subscription Payment Report {today.date()}", merchant.email)
     

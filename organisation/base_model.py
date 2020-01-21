@@ -33,6 +33,7 @@ class OracleDocumentABC(db.Document):
     """
 
     _ctl_modified = DateTimeField()
+    created_at = DateTimeField()
 
     meta = {"abstract": True, "strict": False}
 
@@ -61,8 +62,8 @@ def attach_signal_to_all_subclasses():
         mongoengine_signals.pre_save.connect(update_modified, subclass)
 
 
-class BaseUser(db.Document, UserMixin):
-    email = StringField(unique=True)
+class BaseUser(db.Document,UserMixin):
+    email_id = StringField(unique=True)
     password = StringField(max_length=128)
 
     meta = {"abstract": True}
@@ -84,15 +85,3 @@ class BaseUser(db.Document, UserMixin):
             str(raw_password).encode("utf-8"), str(self.password).encode("utf-8")
         )
 
-    @classmethod
-    def create_user(cls, name, email, password):
-        try:
-            email_name, domain_part = email.strip().split("@", 1)
-        except ValueError:
-            pass
-        else:
-            email = "@".join([email_name.lower(), domain_part.lower()])
-
-        user = BaseUser(first_name=name, email=email)
-        user.set_password(password)
-        return user

@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block maincontents %}
+
+<style type="text/css">
+.btn.btn-save{
+    margin-top: 25px;
+}
+.btn-move-list{
+    margin-top: 45px;
+}
+.btn-savelist{
+    padding-right : 0px !important;
+}
+    .panel.with-nav-tabs .panel-heading{
+    padding: 5px 5px 0 5px;
+}
+.panel.with-nav-tabs .nav-tabs{
+    border-bottom: none;
+}
+.panel.with-nav-tabs .nav-justified{
+    margin-bottom: -1px;
+}
+.panel-heading{
+    background-color: #5cc2b2 !important;
+    border-color: #5cc2b2 !important;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li > a,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:focus {
+    color: #fff;
+}
+.with-nav-tabs.panel-primary .nav-tabs > .open > a,
+.with-nav-tabs.panel-primary .nav-tabs > .open > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > .open > a:focus,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:focus {
+    color: #fff;
+    background-color: #3071a9;
+    border-color: transparent;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.active > a,
+.with-nav-tabs.panel-primary .nav-tabs > li.active > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li.active > a:focus {
+    color: #428bca;
+    background-color: #fff;
+    border-color: #428bca;
+    border-bottom-color: transparent;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu {
+    background-color: #428bca;
+    border-color: #3071a9;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > li > a {
+    color: #fff;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > li > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > li > a:focus {
+    background-color: #3071a9;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > .active > a,
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > .active > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > .active > a:focus {
+    background-color: #4a9fe9;
+}
+
+#dataTable tr td {
+    padding: 10px;
+}
+
+#dataTable tr th {
+    padding: 10px;
+}
+</style>
+    <div class="row">
+        <div >
+            <div class="panel with-nav-tabs ">
+                <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li><a href="#add-customer" data-toggle="tab">Add Customers</a></li>
+                            <li ><a href="#customer-list-tab" data-toggle="tab">Customers List</a></li>
+                        </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                            <div class="tab-pane fade " id="add-customer">
+                                    <div class="grid simple">
+                                        <div class="grid-body grid-page-title">
+                                            <h3 class="inline">Add <span class="semi-bold">Customers</span></h3>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <form class="form-no-horizontal-spacing"
+                                              id="product-cycle-form"
+                                              action="{{ url_for('auth_views.oracle_org_create_customer') }}" method="POST">
+ <div class="row column-seperation">
+                   <div class="col-md-5 "> <br>
+            <h4>Sign up</h4>
+            <form id="login-form" class="login-form" action="/accounts/login" method="post">
+                <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">First name</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Please enter first name" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                  <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Last name</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Please enter last name" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Email Id</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="email" name="email_id" id="email_id" class="form-control" placeholder="Please enter email_id" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                 <div class="row">
+                          <div class="form-group col-md-10">
+                    <label>Subscription Type</label>
+                    <select  type="text" name="subscription_type"  id="subscription_type"  required="true">
+                          <option value="1" >Monthly</option>
+                          <option value="3" >Quarterly</option>
+                          <option value="6" >Half Yearly</option>
+                          <option value="12" >Yearly</option>
+                    </select>
+                 </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Phone Number</label>
+                        <span class="help"></span>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="phone_number" id="phone_number" class="form-control" placeholder="Please enter phone number" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                  <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Start Date</label>
+                        <span class="help"></span>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="date" name="start_date"  class="form-control" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+
+                 <div class="row">
+                    <div class="form-group col-md-10">
+                        <label>Service Name</label>
+                            <select type="text" name="service_id"   id="service_id" class="form-control" style="width: 200px; border-radius: 2px;" required="true" >
+                                {% for service in services %}
+                                    <option value="{{ service.id }}">{{ service.service_name }}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                 </div>
+
+
+                 <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Payment Mode</label>
+                    <select name="payment_mode"   id="payment_mode" required="true">
+                          <option value="subscription" >Subscription Based</option>
+                          <option value="cash" >Cash</option>
+                    </select>
+                 </div>
+            </div>
+
+
+                 <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Card Number</label>
+                        <span class="help"></span>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="card_number"  class="form-control" style="border-radius: 4px;width:300px;">
+                        </div>
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Expiration Date</label>
+                        <span class="help"></span>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="expiration_date" name="expiration_date" class="form-control" style="border-radius: 4px;width:300px;">
+                        </div>
+                    </div>
+                </div>
+                                                 <div class="form-actions">
+                                                <div class="pull-right">
+                                                    <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect"  type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>&nbsp;  Save</button>
+                                                    <button class="btn btn-small btn-update ripple-effect btn-raised ripple-effect btn-cons cancel-button" type="reset" value="Cancel"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp; Cancel</button>
+                                                </div>
+                                            </div>
+      </div>
+            </form>
+        </div>
+    </div>
+
+
+                                            </form>
+                                        </div>
+                             </div>
+
+                    </div>
+                        <div class="tab-pane fade " id="customer-list-tab">
+                            <div class="grid simple">
+                                    <div class="grid-body grid-page-title">
+                                        <h3 class="inline"> <span class="semi-bold">Customer List</span></h3>
+                                        <h3 class="v-align-middle pull-right"><a href="{{ url_for('auth_views.oracle_org_customers') }}"></a></h3>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="grid-body">
+
+                                              <table class="table table-bordered" style="width: 100%;">
+                                                <thead>
+                                                    <th class="text-center">S.No.</th>
+                                                    <th class="text-center">Customer  EmailID</th>
+                                                    <th class="text-center">Customer Firstname</th>
+                                                    <th class="text-center">Customer Lastname</th>
+                                                    <th class="text-center">Subscription Type</th>
+                                                     <th class="text-center">Service Name</th>
+                                                    <th class="text-center">Due Date</th>
+                                                    <th class="text-center">Due Amount</th>
+
+                                                </thead>
+                                                <tbody>
+                                                    {% for customer in customers %}
+                                                        <tr>
+                                                            <td>{{ loop.index }}</td>
+                                                             <td class="v-align-middle"><a href="{{ url_for('auth_views.oracle_org_customer_update', customer_id=customer.id) }}">{{ customer.email_id }}</a></td>
+                                                            <td class="text-left" >{{ customer.first_name  }}</td>
+                                                            <td class="text-left" >{{ customer.last_name  }}</td>
+                                                            <td class="text-right">{{ customer.subscription_type }}</td>
+                                                            <td class="text-right">{{ customer.service.service_name }}</td>
+                                                            <td class="text-right">{{ customer.due_date }}</td>
+                                                            <td class="text-left">{{ customer.payment.due_payment }}</td>
+
+
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block js_scripts %}
+    <script type="text/javascript">
+
+            submitHandler: function (form) {
+                $('#add-service-submit-btn').click(function(){
+                    form.submit();
+                });
+                }
+            });
+
+        });
+
+    </script>
+    {% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block maincontents %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="grid simple ">
+                <div class="grid-body grid-page-title">
+                    <h3 class="inline">Merchant <span class="semi-bold">Actions</span></h3>
+                    <h3 class="v-align-middle pull-right">
+                        <a href="{{ url_for('auth_views.oracle_org_dashboard') }}">Oracle Products</a></h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="grid-body">
+                    <div class="row">
+                        <div class="col-md-4 admin-action">
+                             <a class="btn btn-large btn-block btn-raised ripple-effect btn-admin-action" type="button"
+                                href="{{ url_for('auth_views.oracle_org_services') }}" style="margin-left: 80px;">
+Services
+                            </a>
+                        </div>
+
+                         <div class="col-md-4 admin-action"></div>
+
+
+                        <div class="col-md-4 admin-action">
+                            <a class="btn btn-large btn-block btn-raised ripple-effect btn-admin-action"
+                                type="button" href="{{ url_for('auth_views.oracle_org_customers') }}" style="margin-right: -80px;">
+Customers
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js_scripts %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var responsiveHelper = undefined;
+            var breakpointDefinition = {
+                tablet: 1024,
+                phone : 480
+            };
+
+            var tableElement = $('#organisation-emp-table');
+            tableElement.dataTable( {
+                "pageLength": 100,
+                "sPaginationType": "bootstrap",
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [ 0 ] }
+                ],
+                "aaSorting": [[ 1, "asc" ]],
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ ",
+                    "sInfo": "Showing <b>_START_ to _END_</b> of _TOTAL_ entries"
+                },
+                bAutoWidth     : false,
+                fnPreDrawCallback: function () {
+                    if (!responsiveHelper) {
+                        responsiveHelper = new ResponsiveDatatablesHelper(tableElement, breakpointDefinition);
+                    }
+                },
+                fnRowCallback  : function (nRow) {
+                    responsiveHelper.createExpandIcon(nRow);
+                },
+                fnDrawCallback : function (oSettings) {
+                    responsiveHelper.respond();
+                }
+            });
+            $('#organisation-emp-table_wrapper .dataTables_length select').addClass("select2  select2-wrapper span12"); // modify table per page dropdown
+
+
+            var tableElement = $('#organisation-product-table');
+            tableElement.dataTable( {
+                "pageLength": 100,
+                "sPaginationType": "bootstrap",
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [ 0 ] }
+                ],
+                "aaSorting": [[ 1, "asc" ]],
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ ",
+                    "sInfo": "Showing <b>_START_ to _END_</b> of _TOTAL_ entries"
+                },
+                bAutoWidth     : false,
+                fnPreDrawCallback: function () {
+                    if (!responsiveHelper) {
+                        responsiveHelper = new ResponsiveDatatablesHelper(tableElement, breakpointDefinition);
+                    }
+                },
+                fnRowCallback  : function (nRow) {
+                    responsiveHelper.createExpandIcon(nRow);
+                },
+                fnDrawCallback : function (oSettings) {
+                    responsiveHelper.respond();
+                }
+            });
+            $('#organisation-product-table_wrapper .dataTables_length select').addClass("select2  select2-wrapper span12");
+
+            $(".select2 ").select2();
+        });
+    </script>
+{% endblock %}

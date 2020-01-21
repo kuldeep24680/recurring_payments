@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block maincontents %}
+
+<style type="text/css">
+.btn.btn-save{
+    margin-top: 25px;
+}
+.btn-move-list{
+    margin-top: 45px;
+}
+.btn-savelist{
+    padding-right : 0px !important;
+}
+    .panel.with-nav-tabs .panel-heading{
+    padding: 5px 5px 0 5px;
+}
+.panel.with-nav-tabs .nav-tabs{
+    border-bottom: none;
+}
+.panel.with-nav-tabs .nav-justified{
+    margin-bottom: -1px;
+}
+.panel-heading{
+    background-color: #5cc2b2 !important;
+    border-color: #5cc2b2 !important;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li > a,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:focus {
+    color: #fff;
+}
+.with-nav-tabs.panel-primary .nav-tabs > .open > a,
+.with-nav-tabs.panel-primary .nav-tabs > .open > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > .open > a:focus,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li > a:focus {
+    color: #fff;
+    background-color: #3071a9;
+    border-color: transparent;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.active > a,
+.with-nav-tabs.panel-primary .nav-tabs > li.active > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li.active > a:focus {
+    color: #428bca;
+    background-color: #fff;
+    border-color: #428bca;
+    border-bottom-color: transparent;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu {
+    background-color: #428bca;
+    border-color: #3071a9;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > li > a {
+    color: #fff;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > li > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > li > a:focus {
+    background-color: #3071a9;
+}
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > .active > a,
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > .active > a:hover,
+.with-nav-tabs.panel-primary .nav-tabs > li.dropdown .dropdown-menu > .active > a:focus {
+    background-color: #4a9fe9;
+}
+
+#dataTable tr td {
+    padding: 10px;
+}
+
+#dataTable tr th {
+    padding: 10px;
+}
+</style>
+    <div class="row">
+        <div >
+            <div class="panel with-nav-tabs ">
+                <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li><a href="#add-customer" data-toggle="tab">Add Services</a></li>
+                            <li ><a href="#customer-list-tab" data-toggle="tab">Services List</a></li>
+                        </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                            <div class="tab-pane fade " id="add-customer">
+                                    <div class="grid simple">
+                                        <div class="grid-body grid-page-title">
+                                            <h3 class="inline">Add <span class="semi-bold">Services</span></h3>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <form class="form-no-horizontal-spacing"
+                                              id="product-cycle-form"
+                                              action="{{ url_for('auth_views.oracle_org_create_service') }}" method="POST">
+ <div class="row column-seperation">
+                   <div class="col-md-5 "> <br>
+            <h4>Sign up</h4>
+            <form id="login-form" class="login-form" action="{{ url_for('auth_views.oracle_org_create_service') }} method="post">
+                <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Service Name</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="service_name" id="service_name" class="form-control" placeholder="Please enter service name" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                  <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Cost per Month</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="service_cost" id="service_cost" class="form-control" placeholder="Please enter service cost" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="row">
+                          <div class="form-group col-md-10">
+                    <label>Is Any Offer Available?</label>
+                    <select name="is_offer_available"  id="is_offer_available" required="true">
+                          <option value="Yes" >Yes</option>
+                          <option value="No" >No</option>
+                    </select>
+                 </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Discount Percentage</label>
+                        <span class="help"></span>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="number" name="discount_percent" id="discount_percent" class="form-control" placeholder="Please enter discount % " style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                        <div class="form-actions">
+                                                <div class="pull-right">
+                                                    <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect" id="add-service-submit-btn" type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>&nbsp;Submit</button>
+                                                    <button class="btn btn-small btn-update ripple-effect btn-raised ripple-effect btn-cons cancel-button" type="reset" value="Cancel"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp; Cancel</button>
+                                                </div>
+                                            </div>
+                       </div>
+     </div>
+
+            </form>
+        </div>
+    </div>
+
+
+                                            </form>
+                                        </div>
+                             </div>
+
+                    </div>
+                        <div class="tab-pane fade " id="customer-list-tab">
+                            <div class="grid simple">
+                                    <div class="grid-body grid-page-title">
+                                        <h3 class="inline"> <span class="semi-bold">Services List</span></h3>
+                                        <h3 class="v-align-middle pull-right"><a href="{{ url_for('auth_views.oracle_org_create_service') }}"></a></h3>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="grid-body">
+
+                                              <table class="table table-bordered" style="width: 100%;">
+                                                <thead>
+                                                    <th class="text-center">S.No.</th>
+                                                    <th class="text-center">Service Name</th>
+                                                    <th class="text-center">Cost Per Month</th>
+                                                    <th class="text-center">Is Any Offer Available?</th>
+                                                     <th class="text-center">Discount Percentage</th>
+
+                                                </thead>
+                                                <tbody>
+                                                    {% for service in services %}
+                                                        <tr>
+                                                            <td>{{ loop.index }}</td>
+                                                             <td class="v-align-middle"><a href="{{ url_for('auth_views.oracle_org_update_service', service_id=service.id) }}">{{ service.service_name }}</a></td>
+                                                            <td class="text-left" >{{ service.service_cost_per_month  }}</td>
+                                                            <td class="text-right">{{ service.is_offer_available }}</td>
+                                                            <td class="text-right">{{ service.discount_percent }}</td>
+
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js_scripts %}
+    <script type="text/javascript">
+
+            submitHandler: function (form) {
+                $('#add-service-submit-btn').click(function(){
+                    form.submit();
+                });
+                }
+            });
+
+        });
+
+    </script>
+    {% endblock %}

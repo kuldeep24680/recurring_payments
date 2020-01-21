@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107874546-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-107874546-2');
+    </script>
+
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta charset="utf-8" />
+    <title>{% block title %}eSthenos{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css">
     <link href="{{ url_for('static', filename='plugins/jquery-slider/css/jquery.sidr.light.css' )}}" rel="stylesheet" type="text/css" media="screen"/>
     <link href="{{ url_for('static', filename='plugins/boostrapv3/css/bootstrap.min.css' )}}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='plugins/boostrapv3/css/bootstrap-theme.min.css' )}}" rel="stylesheet" type="text/css"/>
@@ -21,75 +31,41 @@
     <link href="{{ url_for('static', filename='css/custom-icon-set.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/icon.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/bootstrap-material-datetimepicker.css') }}" rel="stylesheet" type="text/css"/>
+    <link  href="{{ url_for('static', filename='css/bootstrap-multiselect.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link href="{{ url_for('static', filename='css/stellarnav.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/icon.css') }}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet"  href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css"/>
+    <!-- <link href="{{ url_for('static', filename='css/custom-responsive.css') }}" rel="stylesheet" type="text/css"> -->
     <link href="{{ url_for('static', filename='plugins/jquery-datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css">
+
     {% block css_sheets %}{% endblock %}
     {% block top_js_scripts %}{% endblock %}
 </head>
 
 <body class="">
-<div class="header navbar navbar-inverse hidden-sm hidden-xs">
-    <div class="navbar-inner">
-        <div class="header-seperation">
-            <a href="{{ url_for("organisation_views.home_page") }}">
-                <img src="{{ url_for('static', filename='img/logo-esthenos.png')}}" class="logo" alt=""  data-src="{{ url_for('static', filename='img/logo-esthenos.png')}}" data-src-retina="{{ url_for('static', filename='img/logo-esthenos2x.png')}}"/>
-            </a>
-            <ul class="nav pull-right notifcation-center">
-                <li> <a href="{{ url_for("organisation_views.home_page") }}"> <div class="iconset top-home"></div> </a> </li>
+
+
+<div class="page-container row-fluid">
+    <div class="page-sidebar" id="main-menu">
+        <div class="page-sidebar-wrapper" id="main-menu-wrapper">
+
+            <ul class="custom-drop-list">
+                {% block nav_bar %}
+                    <li {% if 'dashboard' == active_page %} class="active" {% endif %} class="start">
+                        <a href="/">
+                            <i class="icon-custom-home"></i>
+                            <span class="title">Dashboard</span>
+                        </a>
+
+
+
+                    <li class="version">
+                        <a href="{{url_for('auth_views.oracle_org_logout')}}" ><i class="fa fa-power-off material-power-off"></i> <span class="title" style="color:#d2d5dc;">Logout</span></a>
+                    </li>
+                {% endblock %}
             </ul>
+            <div class="clearfix"></div>
         </div>
-
-        <div class="header-quick-nav" >
-            <div class="pull-left">
-                <ul class="nav quick-section">
-                    <li class="quicklinks">
-                        <a href="#" id="layout-condensed-toggle" ><div class="iconset top-menu-toggle-dark"></div></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="pull-right">
-                <ul class="nav quick-section">
-                    <li class="quicklinks">
-                        <div class="inline inline-username">{{ user.first_name }} <span class="bold">{{ user.last_name }}</span></div>
-                    </li>
-                    <li class="quicklinks">
-                        <a class="inline" href="{{ url_for("organisation_views.user_profile_page") }}"><i class="material-icons material-user">&#xE853;</i></a>
-                    </li>
-                    <li class="quicklinks">
-                        <a class="inline" href="{{ url_for("auth_views.logout") }}"><i class="fa fa-power-off material-power-off"></i></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-            <li>
-                <a href="{{ url_for("auth_views.logout") }}">
-                    <i class="fa fa-power-off"></i>
-                    <span>Logout</span>
-                </a>
-            </li>
-            {% if feature_show("features_manuals") %}
-            <li {% if 'manuals' == active_page %} class="active" {% endif %} class="start">
-                <a href="{{ url_for("organisation_views.user_manuals") }}">
-                    <i class="fa fa-exclamation"></i>
-                    <span class="title">User Manuals</span>
-                </a>
-            </li>
-            {% endif %}
-            <li class="start">
-                <a href="{{ ""|apkassets }}">
-                    <i class="fa fa-download"></i>
-                    <span class="title">Download APK</span>
-                </a>
-            </li>
-            <li class="version">
-              <a href="#"><i class="fa fa-code-fork"></i> {{ git_info }}</a>
-            </li>
-        </ul>
     </div>
 
     <div class="page-content">
@@ -102,7 +78,6 @@
 
 <script src="{{ url_for('static', filename='plugins/jquery-1.8.3.min.js' )}}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='plugins/jquery-ui/jquery-ui-1.10.1.custom.min.js' )}}" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='plugins/jquery-datatable/js/jquery.dataTables.min.js' )}}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.min.js' )}}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='plugins/breakpoints.js' )}}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='plugins/jquery-unveil/jquery.unveil.min.js' )}}" type="text/javascript"></script>
@@ -111,7 +86,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.7/jquery.slimscroll.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='plugins/jquery-numberAnimate/jquery.animateNumbers.js' )}}" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' )}}" type="text/javascript"></script>
+<!-- <script src="{{ url_for('static', filename='plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' )}}" type="text/javascript"></script> -->
 <script src="{{ url_for('static', filename='plugins/bootstrap-select2/select2.min.js' )}}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='plugins/boostrap-form-wizard/js/jquery.bootstrap.wizard.min.js' )}}" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js" type="text/javascript"></script>
@@ -120,67 +95,11 @@
 <script src="{{ url_for('static', filename='plugins/jquery-notifications/js/messenger-theme-future.js' )}}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='js/core.js' )}}" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='js/stellarnav.js' )}}" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
 <script src="{{ url_for('static', filename='js/moment-with-locales.min.js' )}}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-material-datetimepicker.js' )}}" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='js/common.js' )}}" type="text/javascript"></script>
-<script type="text/javascript">
-    jQuery(document).ready(function($) {
-        jQuery('.stellarnav').stellarNav({
-            theme: 'dark'
-        });
-    });
-</script>
-<script>
-$(document).ready(function(){
-    $('.dropdown-submenu a.test').on("click", function(e){
-        $(this).next('ul').toggle();
-        e.stopPropagation();
-        e.preventDefault();
-    });
-    $('[data-toggle="tooltip"]').tooltip();
-
-    $(".ripple-effect").click(function(e){
-        var rippler = $(this);
-
-        // create .ink element if it doesn't exist
-        if(rippler.find(".ink").length == 0) {
-            rippler.append("<span class='ink'></span>");
-        }
-
-        var ink = rippler.find(".ink");
-
-        // prevent quick double clicks
-        ink.removeClass("animate");
-
-        // set .ink diametr
-        if(!ink.height() && !ink.width())
-        {
-            var d = Math.max(rippler.outerWidth(), rippler.outerHeight());
-            ink.css({height: d, width: d});
-        }
-
-        // get click coordinates
-        var x = e.pageX - rippler.offset().left - ink.width()/2;
-        var y = e.pageY - rippler.offset().top - ink.height()/2;
-
-        // set .ink position and add class .animate
-        ink.css({
-          top: y+'px',
-          left:x+'px'
-        }).addClass("animate");
-    });
-    $('.tabs-item li').click(function(){
-        var tab_id = $(this).attr('data-tab');
-        $('.tabs-item li').removeClass('current');
-        $('.tab-content-list').removeClass('current');
-
-        $(this).addClass('current');
-        $("#"+tab_id).addClass('current');
-    });
-});
-</script>
+<script src="{{ url_for('static', filename='js/bootstrap-multiselect.js' )}}" type="text/javascript"></script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -189,9 +108,9 @@ $(document).ready(function(){
   ga('create', 'UA-75219018-1', 'auto');
   ga('send', 'pageview');
 </script>
+<script src="{{ url_for('static', filename='plugins/jquery-datatable/js/jquery.dataTables.min.js' )}}" type="text/javascript"></script>
+
 <script type="text/javascript">
-    var csrf_token = "{{ csrf_token() }}"
-    loadCsrfToken(csrf_token)
     $(document).ready(function(){
         $('#date_picker').bootstrapMaterialDatePicker({
             time: false,

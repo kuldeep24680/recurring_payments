@@ -1,5 +1,8 @@
 import bcrypt
 import requests
+from flask import request
+from flask_mongoengine import Pagination
+
 from oracle.local_config import *
 from oracle.services import upload_to_s3_filename, get_presigned_url
 
@@ -46,4 +49,35 @@ def send_attachment(file, report_subject, recipient):
     subject = "{} Reports".format(report_subject)
 
     send_email_mailgun(subject, body, recipient)
+    
+    
+def get_page_items():
+    page = int(request.args.get("page", 1))
+    per_page = request.args.get("per_page")
+    if not per_page:
+        per_page = 50
+    else:
+        per_page = int(per_page)
+
+    offset = (page - 1) * per_page
+    return page, per_page, offset
+
+
+def for_pagination(object_list):
+    page, per_page, offset = get_page_items()
+    if type(object_list) is list:
+        count = len(object_list)
+        a = offset
+        b = offset + per_page
+        object_list = object_list[a:b]
+    else:
+        count = object_list.count()
+        object_list = object_list.skip(offset).limit(per_page)
+
+    pagination = Pagination(
+        iterable=object_list,
+        page=page,
+        per_page=per_page,
+    )
+    return pagination, object_list, offset
 

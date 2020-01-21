@@ -28,10 +28,10 @@ RABBIT_MQ_SERVER = "127.0.0.1"
 RABBIT_MQ_PORT = "5672"
 
 CELERY_SETTINGS = {
-    "CELERY_broker_url": "amqp://oracle-tasks:oracle@{}:{}//oracle-tasks".format(
+    "CELERY_broker_url": "amqp://oracle-task:oracle@{}:{}//oracle-task".format(
         RABBIT_MQ_SERVER, RABBIT_MQ_PORT
     ),
-    "result_backend": "amqp://oracle-tasks:oracle@{}:{}//oracle-tasks".format(
+    "result_backend": "amqp://oracle-task:oracle@{}:{}//oracle-task".format(
         RABBIT_MQ_SERVER, RABBIT_MQ_PORT
     ),
     "CELERY_enable_utc": False,

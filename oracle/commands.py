@@ -15,13 +15,11 @@ class InitDB(Command):
 
     def run(self):
         dbname = MONGODB_SETTINGS["DB"]
-        user = OracleOrgUser.create_user(
-            username = "oracle admin",
-            password = ADMIN["password"],
-            email_id = ADMIN["email_id"],
-            is_head_merchant = False,
-            is_admin = True,
-        )
+        user = OracleOrgUser.objects.create(email_id = ADMIN["email_id"])
+        user.set_password(ADMIN["password"])
+        user.username="oracle admin"
+        user.is_head_merchant = False
+        user.is_admin = True
         user.save()
         print("creating database {database} successful.".format(database=dbname))
 
