@@ -6,7 +6,9 @@ from auth.forms import LoginForm, RegistrationForm
 from dashboard.forms import AddOrganisationCustomerForm, AddOrganisationServiceForm
 from oracle.utils import for_pagination
 from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices
+from dashboard.forms import subscription_type_list, boolean_type_list
 from oracle.tasks import subscription_assignment
+from payment_modes.credit_card import delete_subscription
 
 auth_views = Blueprint("auth_views", __name__, template_folder="templates")
 
@@ -90,12 +92,18 @@ def oracle_org_customer_update(customer_id):
     if request.method == "GET":
         customer = OracleOrgCustomer.objects.get(id=str(customer_id))
         services = OracleOrgServices.objects.filter()
+        subscription_type = subscription_type_list
+        boolean_type = boolean_type_list
         kwargs = locals()
         return render_template("customer/customer_update.html", **kwargs)
 
     if request.method == "POST":
         form = AddOrganisationCustomerForm(request.form)
-        form.update()
+        cancel_subcription = form.cancel_subcription.data
+        cust =form.update()
+        
+        if cancel_subcription:
+            delete_subscription(cust.id)
         kwargs = locals()
         return redirect(
             url_for("auth_views.oracle_org_customers")
@@ -138,14 +146,16 @@ def oracle_org_create_service():
 @auth_views.route("/services/<service_id>/update", methods=['GET','POST'])
 @login_required
 def oracle_org_update_service(service_id):
+   
     if request.method == "GET":
-        service = OracleOrgServices.objects.filter()
+        service = OracleOrgServices.objects.get(id=service_id)
+        boolean_type = boolean_type_list
         kwargs = locals()
-        return render_template("service_update.html", **kwargs)
+        return render_template("services/service_update.html", **kwargs)
 
     if request.method == "POST":
         form = AddOrganisationServiceForm(request.form)
-        form.update()
+        form.save()
         kwargs = locals()
         return redirect(
             url_for("auth_views.oracle_org_services")

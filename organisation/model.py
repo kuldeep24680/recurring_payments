@@ -18,10 +18,9 @@ class OracleOrgUser(BaseUser):
     is_admin = BooleanField(default=False)
     
 
-
-
 class OracleOrgServices(OracleDocumentABC):
     service_name = db.StringField()
+    code = db.StringField()
     service_cost_per_month = db.FloatField()
     is_offer_available = db.StringField()
     discount_percent = db.IntField(default=0)

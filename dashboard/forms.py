@@ -14,13 +14,19 @@ from wtforms import SelectMultipleField, Form
 from wtforms import validators as v
 
 from organisation.model import OracleOrgCustomer, OracleOrgPayment, OracleOrgServices, OracleOrgCreditCardDetails
+from payment_modes.credit_card.delete_subscription import delete_subscription
 
-subscription_type_dict = {
-    "Monthly": 1,
-    "Quarterly": 3,
-    "Half Yearly": 6,
-    "Yearly": 12,
-}
+subscription_type_list = [
+    {"id": '1', "value": "Monthly"},
+    {"id": '3', "value": "Quarterly"},
+    {"id": '6', "value": "Half Yearly"},
+    {"id": '12', "value": "Yearly"},
+]
+
+boolean_type_list = [
+    {"id": True, "value": "Yes"},
+    {"id": False, "value": "No"},
+]
 
 
 class AddOrganisationCustomerForm(Form):
@@ -44,6 +50,13 @@ class AddOrganisationCustomerForm(Form):
     )
     card_number = StringField()
     expiration_date = StringField()
+    cancel_subcription = BooleanField()
+    payment_status = BooleanField()
+    is_paying_today = BooleanField()
+    payment_status = BooleanField()
+    payment_pending_days = IntegerField()
+    is_defaulter = BooleanField()
+    is_active = BooleanField()
 
     def validate(self):
         
@@ -68,6 +81,7 @@ class AddOrganisationCustomerForm(Form):
         cust.service = service
         cust.payment_mode = self.payment_mode.data
         cust.created_at = datetime.datetime.now()
+        cust.is_active = True
         cust.payment = OracleOrgPayment(
             payment_status = False,
             is_paying_today = False,
@@ -86,15 +100,15 @@ class AddOrganisationCustomerForm(Form):
         return cust
 
     def update(self):
-        cust = OracleOrgCustomer(email_id=self.email_id.data)
-        service = OracleOrgServices.objects.get(id=self.service.data)
+        cust = OracleOrgCustomer.objects.get(email_id=self.email_id.data)
+        service = OracleOrgServices.objects.get(id=self.service_id.data)
         cust.first_name = self.first_name.data
         cust.last_name = self.last_name.data
         cust.phone_number = self.phone_number.data
         cust.subscription_type = self.subscription_type.data
-        cust.start_date = datetime.strptime(self.start_date.data, '%d/%m/%y %H:%M:%S').strftime("%d/%m/%Y")
-        due_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
-        cust.due_date = due_date
+        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%d/%m/%Y').strftime("%d/%m/%Y")
+        due_date = datetime.datetime.strptime(self.start_date.data, '%d/%m/%Y') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
+        cust.due_date = due_date.strftime("%d/%m/%Y")
         cust.service = service
         cust.payment_mode = self.payment_mode.data
         cust.payment = OracleOrgPayment(
@@ -106,16 +120,23 @@ class AddOrganisationCustomerForm(Form):
             is_defaulter=self.is_defaulter.data,
             transaction_id=None
         )
+        cust.is_active = self.is_active.data
         cust.card_details = OracleOrgCreditCardDetails(
             card_number=self.card_number.data,
             expiration_date=self.expiration_date.data
         )
+        cancel_subcription = self.cancel_subcription.data
+        if cancel_subcription:
+            cust.subscription_id = None
+            
         cust.save()
         return cust
 
 
+
 class AddOrganisationServiceForm(Form):
     service_name = StringField()
+    code = StringField()
     service_cost = FloatField()
     is_offer_available = StringField()
     discount_percent = IntegerField()
@@ -124,10 +145,16 @@ class AddOrganisationServiceForm(Form):
         service_name=self.service_name.data
         if OracleOrgServices.objects.filter(service_name=service_name).first():
             return False, u"Service with this name Already exists"
+        service_code = self.code.data
+        if OracleOrgServices.objects.filter(code=service_code).first():
+            return False, u"Service with this code Already exists"
         return True , ''
         
     def save(self):
-        service = OracleOrgServices(service_name=self.service_name.data)
+        service = OracleOrgServices.objects.filter(service_name=self.service_name.data).first()
+        if not service:
+            service = OracleOrgServices(service_name=self.service_name.data)
+        service.code = self.code.data
         service.service_cost_per_month = float(self.service_cost.data)
         service.created_at = datetime.datetime.now()
         service.is_offer_available = self.is_offer_available.data

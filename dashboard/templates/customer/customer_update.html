@@ -77,31 +77,30 @@
             <div class="panel with-nav-tabs ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li><a href="#add-customer" data-toggle="tab">Add Customers</a></li>
-                            <li ><a href="#customer-list-tab" data-toggle="tab">Customers List</a></li>
+                            <li><a href="#update-customer" data-toggle="tab">Update Customers</a></li>
                         </ul>
                 </div>
                 <div class="panel-body">
                     <div class="tab-content">
-                            <div class="tab-pane fade " id="add-customer">
+                            <div class="tab-pane fade " id="update-customer">
                                     <div class="grid simple">
                                         <div class="grid-body grid-page-title">
-                                            <h3 class="inline">Add <span class="semi-bold">Customers</span></h3>
+                                            <h3 class="inline">Update<span class="semi-bold">Customers</span></h3>
                                             <div class="clearfix"></div>
                                         </div>
                                         <form class="form-no-horizontal-spacing"
-                                              id="product-cycle-form"
-                                              action="{{ url_for('auth_views.oracle_org_create_customer') }}" method="POST">
+                                              id="customer-update-form"
+                                              action="{{ url_for('auth_views.oracle_org_customer_update', customer_id=customer.id) }}" method="POST">
  <div class="row column-seperation">
                    <div class="col-md-5 "> <br>
-            <h4>Sign up</h4>
+
             <form id="login-form" class="login-form" action="/accounts/login" method="post">
                 <div class="row">
                     <div class="form-group col-md-10">
                         <label class="form-label" style="margin-bottom: 0px;">First name</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Please enter first name" style="border-radius: 4px;">
+                            <input type="text" name="first_name" id="first_name"  value="{{ customer.first_name }}" class="form-control" placeholder="Please enter first name" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
@@ -110,7 +109,7 @@
                         <label class="form-label" style="margin-bottom: 0px;">Last name</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Please enter last name" style="border-radius: 4px;">
+                            <input type="text" name="last_name" id="last_name" value="{{ customer.last_name }}" class="form-control" placeholder="Please enter last name" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
@@ -119,7 +118,7 @@
                         <label class="form-label" style="margin-bottom: 0px;">Email Id</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="email" name="email_id" id="email_id" class="form-control" placeholder="Please enter email_id" style="border-radius: 4px;">
+                            <input type="email" name="email_id" id="email_id" value="{{ customer.email_id }}" class="form-control" placeholder="Please enter email_id" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
@@ -127,10 +126,9 @@
                           <div class="form-group col-md-10">
                     <label>Subscription Type</label>
                     <select  type="text" name="subscription_type"  id="subscription_type"  required="true">
-                          <option value="1" >Monthly</option>
-                          <option value="3" >Quarterly</option>
-                          <option value="6" >Half Yearly</option>
-                          <option value="12" >Yearly</option>
+                        {% for item in subscription_type %}
+                          <option {% if customer.subscription_type == item.id %} selected="selected"{% endif %} value="{{ item.id }}" >{{ item.value}}</option>
+                        {% endfor %}
                     </select>
                  </div>
                 </div>
@@ -140,7 +138,7 @@
                         <span class="help"></span>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="phone_number" id="phone_number" class="form-control" placeholder="Please enter phone number" style="border-radius: 4px;">
+                            <input type="text" name="phone_number" id="phone_number" value="{{ customer.phone_number }}" class="form-control" placeholder="Please enter phone number" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
@@ -150,7 +148,7 @@
                         <span class="help"></span>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="date" name="start_date"  class="form-control" style="border-radius: 4px;">
+                            <input type="text" name="start_date" id="start_date" value="{{ customer.start_date }}" class="form-control"  placeholder="01/01/2020" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
@@ -161,7 +159,7 @@
                         <label>Service Name</label>
                             <select type="text" name="service_id"   id="service_id" class="form-control" style="width: 200px; border-radius: 2px;" required="true" >
                                 {% for service in services %}
-                                    <option value="{{ service.id }}">{{ service.service_name }}</option>
+                                    <option  {% if customer.service.id == service.id %} selected="selected"{% endif %} value="{{ service.id }}">{{ service.service_name }}</option>
                         {% endfor %}
                         </select>
                     </div>
@@ -177,7 +175,48 @@
                     </select>
                  </div>
             </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Payment Status</label>
+                    <select name="payment_status" id="payment_status"   required="true">
+                        {% for item in boolean_type %}
+                            <option  {% if customer.payment.payment_status == item.id %} selected="selected"{% endif %} value="{{ item.id }}">{{ item.value }}</option>
+                    {% endfor %}
+                    </select>
+                 </div>
+            </div>
+                 <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Is Paying today</label>
+                    <select name="is_paying_today"  id="is_paying_today" required="true">
+                        {% for item in boolean_type %}
+                            <option {% if customer.payment.is_paying_today == item.id %} selected="selected"{% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                    {% endfor %}
+                    </select>
+                 </div>
+            </div> <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Payment Pending days</label>
+                        <input type="number" name="payment_pending_days" id="payment_pending_days" value="{{ customer.payment.payment_pending_days }}" class="form-control" style="border-radius: 4px;">
+                 </div>
 
+            </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Is Defaulter</label>
+                    <select name="is_defaulter"  id="is_defaulter"  required="true">
+                        {% for item in boolean_type %}
+                            <option {% if customer.payment.is_defaulter == item.id %} selected="selected"{% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                    {% endfor %}
+                    </select>
+                 </div>
+            </div>
+                <div class="row">
+                </div>
+
+                <div class="row">
+
+                </div>
 
                  <div class="row">
                     <div class="form-group col-md-10">
@@ -185,7 +224,7 @@
                         <span class="help"></span>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="card_number"  class="form-control" style="border-radius: 4px;width:300px;">
+                            <input type="text" name="card_number"  value="{{ customer.card_details.card_number }}" class="form-control" style="border-radius: 4px;width:300px;">
                         </div>
                     </div>
                 </div>
@@ -195,69 +234,46 @@
                         <span class="help"></span>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="expiration_date" name="expiration_date" class="form-control" style="border-radius: 4px;width:300px;">
+                            <input type="text" name="expiration_date" name="expiration_date" value="{{ customer.card_details.expiration_date }}" class="form-control" style="border-radius: 4px;width:300px;">
                         </div>
                     </div>
                 </div>
-                                                 <div class="form-actions">
-                                                <div class="pull-right">
-                                                    <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect"  type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>&nbsp;  Save</button>
-                                                    <button class="btn btn-small btn-update ripple-effect btn-raised ripple-effect btn-cons cancel-button" type="reset" value="Cancel"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp; Cancel</button>
-                                                </div>
-                                            </div>
-      </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Cancel Subscription?</label>
+                    <select name="cancel_subscription"  id="cancel_subscription"  required="true">
+                        <option value="True">Yes</option>
+                        <option value="False" selected>No</option>
+                    </select>
+                 </div>
+            </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Mark Customer Active</label>
+                    <select name="is_active"  id="is_active"  required="true">
+                        {% for item in boolean_type %}
+                        <option {% if customer.is_active == item.id %} selected="selected"{% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                    {% endfor %}
+
+                    </select>
+                 </div>
+            </div>
+                <div class="form-actions">
+                    <div class="pull-right">
+                        <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect"  type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>Update</button>
+                        <button class="btn btn-small btn-update ripple-effect btn-raised ripple-effect btn-cons cancel-button" type="reset" value="Cancel"><i class="fa fa-times-circle" aria-hidden="true"></i>Cancel</button>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>
-
-
-                                            </form>
+                                        </form>
                                         </div>
                              </div>
 
                     </div>
-                        <div class="tab-pane fade " id="customer-list-tab">
-                            <div class="grid simple">
-                                    <div class="grid-body grid-page-title">
-                                        <h3 class="inline"> <span class="semi-bold">Customer List</span></h3>
-                                        <h3 class="v-align-middle pull-right"><a href="{{ url_for('auth_views.oracle_org_customers') }}"></a></h3>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div class="grid-body">
 
-                                              <table class="table table-bordered" style="width: 100%;">
-                                                <thead>
-                                                    <th class="text-center">S.No.</th>
-                                                    <th class="text-center">Customer  EmailID</th>
-                                                    <th class="text-center">Customer Firstname</th>
-                                                    <th class="text-center">Customer Lastname</th>
-                                                    <th class="text-center">Subscription Type</th>
-                                                     <th class="text-center">Service Name</th>
-                                                    <th class="text-center">Due Date</th>
-                                                    <th class="text-center">Due Amount</th>
-
-                                                </thead>
-                                                <tbody>
-                                                    {% for customer in customers %}
-                                                        <tr>
-                                                            <td>{{ loop.index }}</td>
-                                                             <td class="v-align-middle"><a href="{{ url_for('auth_views.oracle_org_customer_update', customer_id=customer.id) }}">{{ customer.email_id }}</a></td>
-                                                            <td class="text-left" >{{ customer.first_name  }}</td>
-                                                            <td class="text-left" >{{ customer.last_name  }}</td>
-                                                            <td class="text-right">{{ customer.subscription_type }}</td>
-                                                            <td class="text-right">{{ customer.service.service_name }}</td>
-                                                            <td class="text-right">{{ customer.due_date }}</td>
-                                                            <td class="text-left">{{ customer.payment.due_payment }}</td>
-
-
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                    </div>
-                                </div>
-
-                        </div>
                 </div>
             </div>
         </div>

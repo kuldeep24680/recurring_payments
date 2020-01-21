@@ -105,6 +105,15 @@
                         </div>
                     </div>
                 </div>
+                       <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Service Code</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="code" id="code" class="form-control" placeholder="Please enter service code" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
                   <div class="row">
                     <div class="form-group col-md-10">
                         <label class="form-label" style="margin-bottom: 0px;">Cost per Month</label>
@@ -166,6 +175,7 @@
                                                 <thead>
                                                     <th class="text-center">S.No.</th>
                                                     <th class="text-center">Service Name</th>
+                                                    <th class="text-center">Service Code</th>
                                                     <th class="text-center">Cost Per Month</th>
                                                     <th class="text-center">Is Any Offer Available?</th>
                                                      <th class="text-center">Discount Percentage</th>
@@ -176,6 +186,7 @@
                                                         <tr>
                                                             <td>{{ loop.index }}</td>
                                                              <td class="v-align-middle"><a href="{{ url_for('auth_views.oracle_org_update_service', service_id=service.id) }}">{{ service.service_name }}</a></td>
+                                                            <td class="text-left" >{{ service.code  }}</td>
                                                             <td class="text-left" >{{ service.service_cost_per_month  }}</td>
                                                             <td class="text-right">{{ service.is_offer_available }}</td>
                                                             <td class="text-right">{{ service.discount_percent }}</td>
