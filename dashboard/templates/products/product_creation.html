@@ -77,82 +77,53 @@
             <div class="panel with-nav-tabs ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li><a href="#add-customer" data-toggle="tab">Add Services</a></li>
-                            <li ><a href="#customer-list-tab" data-toggle="tab">Services List</a></li>
+                            <li><a href="#add-customer" data-toggle="tab">Add Products</a></li>
+                            <li ><a href="#customer-list-tab" data-toggle="tab">Products List</a></li>
                         </ul>
                 </div>
                 <div class="panel-body">
                     <div class="tab-content">
-                            <div class="tab-pane fade " id="add-customer">
+                            <div class="tab-pane fade" id="add-customer">
                                     <div class="grid simple">
                                         <div class="grid-body grid-page-title">
-                                            <h3 class="inline">Add <span class="semi-bold">Services</span></h3>
+                                            <h3 class="inline">Add <span class="semi-bold">Products</span></h3>
                                             <div class="clearfix"></div>
                                         </div>
                                         <form class="form-no-horizontal-spacing"
                                               id="product-cycle-form"
-                                              action="{{ url_for('auth_views.oracle_org_create_service') }}" method="POST">
+                                              action="{{ url_for('auth_views.oracle_org_create_product') }}" method="POST">
  <div class="row column-seperation">
                    <div class="col-md-5 "> <br>
-            <form id="login-form" class="login-form" action="{{ url_for('auth_views.oracle_org_create_service') }} method="post">
+            <form id="login-form" class="login-form" action="{{ url_for('auth_views.oracle_org_create_product') }}" method="POST" >
                 <div class="row">
                     <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Service Name</label>
+                        <label class="form-label" style="margin-bottom: 0px;">Product Name</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="service_name" id="service_name" class="form-control" placeholder="Please enter service name" style="border-radius: 4px;">
+                            <input type="text" name="product_name" id="product_name" class="form-control" placeholder="Please enter product name" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
                        <div class="row">
                     <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Service Code</label>
+                        <label class="form-label" style="margin-bottom: 0px;">Product Code</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="code" id="code" class="form-control" placeholder="Please enter service code" style="border-radius: 4px;">
+                            <input type="text" name="product_code" id="product_code" class="form-control" placeholder="Please enter product code" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                  <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Cost</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="product_cost" id="product_cost" class="form-control" placeholder="Please enter product cost" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
 
-                  <div class="row">
-                    <div class="form-group col-md-10">
-                        <label>Product Assignment</label>
-                      <select id="select-products" class="form-control"  multiple="multiple" name="assigned_products">
-                          {% for product in products %}
-                          <option value="{{product.id}}">{{product.product_name}} ({{product.product_code}})</option>
-                          {% endfor %}
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Cost per Month</label>
-                        <div class="input-with-icon right">
-                            <i class=""></i>
-                            <input type="text" name="service_cost" id="service_cost" class="form-control" placeholder="Please enter service cost" style="border-radius: 4px;">
-                        </div>
-                    </div>
-                </div>
 
-                 <div class="row">
-                          <div class="form-group col-md-10">
-                    <label>Is Any Offer Available?</label>
-                    <select name="is_offer_available"  id="is_offer_available" required="true">
-                          <option value="Yes" >Yes</option>
-                          <option value="No" >No</option>
-                    </select>
-                 </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Discount Percentage</label>
-                        <span class="help"></span>
-                        <div class="input-with-icon right">
-                            <i class=""></i>
-                            <input type="number" name="discount_percent" id="discount_percent" class="form-control" placeholder="Please enter discount % " style="border-radius: 4px;">
-                        </div>
-                    </div>
-                </div>
                         <div class="form-actions">
                                                 <div class="pull-right">
                                                     <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect" id="add-service-submit-btn" type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>&nbsp;Submit</button>
@@ -169,12 +140,14 @@
 
                                             </form>
                                         </div>
-                        <div class="tab-content">
-                        <div class="tab-pane fade " id="customer-list-tab">
+                             </div>
+
+                    </div>
+                        <div class="tab-pane fade" id="customer-list-tab">
                             <div class="grid simple">
                                     <div class="grid-body grid-page-title">
-                                        <h3 class="inline"> <span class="semi-bold">Services List</span></h3>
-                                        <h3 class="v-align-middle pull-right"><a href="{{ url_for('auth_views.oracle_org_services') }}"></a></h3>
+                                        <h3 class="inline"> <span class="semi-bold">Products List</span></h3>
+                                        <h3 class="v-align-middle pull-right"><a href="{{ url_for('auth_views.oracle_org_products') }}" method="GET" ></a></h3>
                                         <div class="clearfix"></div>
                                     </div>
                                     <div class="grid-body">
@@ -182,24 +155,20 @@
                                               <table class="table table-bordered" style="width: 100%;">
                                                 <thead>
                                                     <th class="text-center">S.No.</th>
-                                                    <th class="text-center">Service Name</th>
-                                                    <th class="text-center">Service Code</th>
-                                                    <th class="text-center">Cost Per Month</th>
-                                                    <th class="text-center">Is Any Offer Available?</th>
-                                                    <th class="text-center">Discount Percentage</th>
+                                                    <th class="text-center">Product Name</th>
+                                                    <th class="text-center">Product Code</th>
+                                                    <th class="text-center">Cost</th>
                                                     <th class="text-center">Wish to delete?</th>
 
                                                 </thead>
                                                 <tbody>
-                                                    {% for service in services %}
+                                                    {% for product in products %}
                                                         <tr>
                                                             <td>{{ loop.index }}</td>
-                                                             <td class="v-align-middle"><a href="{{ url_for('auth_views.oracle_org_update_service', service_id=service.id) }}">{{ service.service_name }}</a></td>
-                                                            <td class="text-left" >{{ service.code  }}</td>
-                                                            <td class="text-left" >{{ service.service_cost_per_month  }}</td>
-                                                            <td class="text-right">{{ service.is_offer_available }}</td>
-                                                            <td class="text-right">{{ service.discount_percent }}</td>
-                                                            <td class="text-center"><a href="{{ url_for('auth_views.oracle_org_delete_service', service_id=service.id) }}"><span class="title" style="color:red;">DELETE</span></a></td>
+                                                             <td class="v-align-middle"><a href="{{ url_for('auth_views.oracle_org_update_product', product_id=product.id) }}">{{ product.product_name }}</a></td>
+                                                            <td class="text-left" >{{ product.product_code  }}</td>
+                                                            <td class="text-left" >{{ product.product_cost  }}</td>
+                                                            <td class="text-center"><a href="{{ url_for('auth_views.oracle_org_delete_product', product_id=product.id) }}"><span class="title" style="color:red;">DELETE</span></a></td>
 
 
                                                         </tr>
@@ -208,9 +177,6 @@
                                             </table>
                                     </div>
                                 </div>
-                                                         </div>
-
-                    </div></div>
 
                         </div>
                 </div>
@@ -222,14 +188,6 @@
 
 {% block js_scripts %}
     <script type="text/javascript">
-        $(document).ready(function() {
-        $('#select-products').multiselect({
-              enableClickableOptGroups: true,
-              enableCollapsibleOptGroups: true,
-              enableFiltering: false,
-              includeSelectAllOption: true
-          });
-    });
 
             submitHandler: function (form) {
                 $('#add-service-submit-btn').click(function(){

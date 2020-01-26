@@ -1,5 +1,6 @@
 import datetime
 
+from mongoengine import ListField
 from wtforms import (PasswordField,
     HiddenField,
     ValidationError,
@@ -13,8 +14,8 @@ from wtforms import (PasswordField,
 from wtforms import SelectMultipleField, Form
 from wtforms import validators as v
 
-from organisation.model import OracleOrgCustomer, OracleOrgPayment, OracleOrgServices, OracleOrgCreditCardDetails
-
+from organisation.model import OracleOrgCustomer, OracleOrgPayment, OracleOrgServices, OracleOrgCreditCardDetails, \
+    OracleOrgProducts
 
 subscription_type_list = [
     {"id": '1', "value": "Monthly"},
@@ -133,6 +134,7 @@ class AddOrganisationServiceForm(Form):
     service_name = StringField()
     code = StringField()
     service_cost = FloatField()
+    assigned_products = SelectMultipleField("assigned_products")
     is_offer_available = StringField()
     discount_percent = IntegerField()
     
@@ -151,7 +153,32 @@ class AddOrganisationServiceForm(Form):
             service = OracleOrgServices(service_name=self.service_name.data)
         service.code = self.code.data
         service.service_cost_per_month = float(self.service_cost.data)
+        service.products = self.assigned_products.data
         service.created_at = datetime.datetime.now()
         service.is_offer_available = self.is_offer_available.data
         service.discount_percent = self.discount_percent.data
         service.save()
+
+
+class AddOrganisationProductForm(Form):
+    product_name = StringField()
+    product_code = StringField()
+    product_cost = FloatField()
+    
+    def validate(self):
+        product_name = self.product_name.data
+        if OracleOrgProducts.objects.filter(product_name=product_name).first():
+            return False, u"Product with this name Already exists"
+        product_code = self.product_code.data
+        if OracleOrgProducts.objects.filter(product_code=product_code).first():
+            return False, u"Product with this code Already exists"
+        return True, ''
+    
+    def save(self):
+        product = OracleOrgProducts.objects.filter(product_name=self.product_name.data).first()
+        if not product:
+            product = OracleOrgProducts(product_name=self.product_name.data)
+        product.product_code = self.product_code.data
+        product.product_cost= float(self.product_cost.data)
+        product.created_at = datetime.datetime.now()
+        product.save()

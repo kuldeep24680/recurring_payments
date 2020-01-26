@@ -5,9 +5,9 @@ from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.utils import redirect
 
 from auth.forms import LoginForm, RegistrationForm
-from dashboard.forms import AddOrganisationCustomerForm, AddOrganisationServiceForm
+from dashboard.forms import AddOrganisationCustomerForm, AddOrganisationServiceForm, AddOrganisationProductForm
 from oracle.utils import for_pagination
-from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices
+from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices, OracleOrgProducts
 from dashboard.forms import subscription_type_list, boolean_type_list
 from oracle.tasks import subscription_assignment, cancel_customer_subscription_service, \
     monthly_graduated_customer_report
@@ -168,6 +168,7 @@ def oracle_org_delete_service(service_id):
 def oracle_org_update_service(service_id):
     if request.method == "GET":
         service = OracleOrgServices.objects.get(id=str(service_id))
+        products = OracleOrgProducts.objects.filter()
         boolean_type = boolean_type_list
         kwargs = locals()
         return render_template("services/service_update.html", **kwargs)
@@ -186,8 +187,61 @@ def oracle_org_update_service(service_id):
 def oracle_org_services():
     if request.method == "GET":
         services = OracleOrgServices.objects.filter()
+        products = OracleOrgProducts.objects.filter()
         kwargs = locals()
         return render_template("services/service_creation.html", **kwargs)
+
+
+@auth_views.route('/product/new', methods=['POST'])
+@login_required
+def oracle_org_create_product():
+    if request.method == "POST":
+        product = AddOrganisationProductForm(request.form)
+        status, msg = product.validate()
+        if status:
+            product.save()
+        else:
+            flash(msg, "error")
+            kwargs = locals()
+        return redirect(
+            url_for("auth_views.oracle_org_products")
+        )
+
+
+@auth_views.route("/products/<product_id>/delete")
+@login_required
+def oracle_org_delete_product(product_id):
+    product = OracleOrgProducts.objects.get(id=str(product_id))
+    product.delete()
+    return redirect(
+        url_for("auth_views.oracle_org_products")
+    )
+
+
+@auth_views.route("/products/<product_id>/update", methods=['GET', 'POST'])
+@login_required
+def oracle_org_update_product(product_id):
+    if request.method == "GET":
+        product = OracleOrgProducts.objects.get(id=str(product_id))
+        kwargs = locals()
+        return render_template("products/product_update.html", **kwargs)
+    
+    if request.method == "POST":
+        form = AddOrganisationServiceForm(request.form)
+        form.save()
+        kwargs = locals()
+        return redirect(
+            url_for("auth_views.oracle_org_products")
+        )
+    
+    
+@auth_views.route("/products", methods=["GET"])
+@login_required
+def oracle_org_products():
+    if request.method == "GET":
+        products = OracleOrgProducts.objects.filter()
+        kwargs = locals()
+        return render_template("products/product_creation.html", **kwargs)
     
     
 @auth_views.route("/report", methods=["GET", "POST"])

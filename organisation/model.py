@@ -10,12 +10,19 @@ class OracleOrgUser(BaseUser):
     created_at = db.DateTimeField()
     is_head_merchant = BooleanField(default=False)
     is_admin = BooleanField(default=False)
-    
+
+
+class OracleOrgProducts(OracleDocumentABC):
+    product_name = db.StringField()
+    product_code = db.StringField()
+    product_cost = db.FloatField()
+
 
 class OracleOrgServices(OracleDocumentABC):
     service_name = db.StringField()
     code = db.StringField()
     service_cost_per_month = db.FloatField()
+    products = db.ListField(db.ObjectIdField())
     is_offer_available = db.StringField()
     discount_percent = db.IntField(default=0)
 
@@ -65,3 +72,4 @@ class OracleOrgMonthlyGraduatedCustomers(OracleDocumentABC):
     payment_mode = db.StringField()
     payment_status = db.StringField()
     
+

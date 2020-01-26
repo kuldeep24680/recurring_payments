@@ -77,7 +77,7 @@
             <div class="panel with-nav-tabs ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li><a href="#update-service" data-toggle="tab">Update Services</a></li>
+                            <li><a href="#update-service" data-toggle="tab">Update Products</a></li>
                         </ul>
                 </div>
                 <div class="panel-body">
@@ -85,73 +85,44 @@
                             <div class="tab-pane fade " id="update-service">
                                     <div class="grid simple">
                                         <div class="grid-body grid-page-title">
-                                            <h3 class="inline">Update<span class="semi-bold">Service</span></h3>
+                                            <h3 class="inline">Update<span class="semi-bold">Product</span></h3>
                                             <div class="clearfix"></div>
                                         </div>
                                         <form class="form-no-horizontal-spacing"
                                               id="service-update-form"
-                                              action="{{ url_for('auth_views.oracle_org_update_service', service_id=service.id) }}" method="POST">
+                                              action="{{ url_for('auth_views.oracle_org_update_product', product_id=product.id) }}" method="POST">
  <div class="row column-seperation">
                    <div class="col-md-5 "> <br>
 
             <form id="login-form" class="login-form" action="/accounts/login" method="post">
                 <div class="row">
                     <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Service name</label>
+                        <label class="form-label" style="margin-bottom: 0px;">Product name</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="service_name" id="service_name"  value="{{ service.service_name }}" class="form-control" placeholder="Please enter service name" style="border-radius: 4px;">
+                            <input type="text" name="product_name" id="product_name"  value="{{ product.product_name }}" class="form-control" placeholder="Please enter product name" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
                   <div class="row">
                     <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Service code</label>
+                        <label class="form-label" style="margin-bottom: 0px;">Product code</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="text" name="code" id="code" value="{{ service.code }}" class="form-control" placeholder="Please enter service code" style="border-radius: 4px;">
+                            <input type="text" name="product_code" id="product_code" value="{{ product.product_code }}" class="form-control" placeholder="Please enter product code" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
                  <div class="row">
                     <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Cost per Month</label>
+                        <label class="form-label" style="margin-bottom: 0px;">Product cost</label>
                         <div class="input-with-icon right">
                             <i class=""></i>
-                            <input type="number" name="service_cost" id="service_cost" value="{{ service.service_cost_per_month }}" class="form-control" placeholder="Please enter service cost" style="border-radius: 4px;">
+                            <input type="number" name="product_cost" id="product_cost" value="{{ product.product_cost }}" class="form-control" placeholder="Please enter product cost" style="border-radius: 4px;">
                         </div>
                     </div>
                 </div>
-                                  <div class="row">
-                    <div class="form-group col-md-10">
-                        <label>Product Assigned</label>
-                      <select id="select-products" class="form-control"  multiple="multiple" name="assigned_products">
-                          {% for product in products %}
-                          <option {% if product.id in service.products %} selected="true" checked="checked" {%endif%} value="{{product.id}}">{{product.product_name}} ({{product.product_code}})</option>
-                          {% endfor %}
-                      </select>
-                    </div>
-                  </div>
-                 <div class="row">
-                          <div class="form-group col-md-10">
-                    <label>Is Offer Available?</label>
-                    <select  type="text" name="is_offer_available"  id="is_offer_available"  required="true">
-                        {% for item in boolean_type %}
-                          <option {% if service.is_offer_available == item.id %} selected="selected"{% endif %} value="{{ item.id }}" >{{ item.value}}</option>
-                        {% endfor %}
-                    </select>
-                 </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-10">
-                        <label class="form-label" style="margin-bottom: 0px;">Discount %</label>
-                        <span class="help"></span>
-                        <div class="input-with-icon right">
-                            <i class=""></i>
-                            <input type="number" name="discount_percent" id="discount_percent" value="{{ service.discount_percent }}" class="form-control" placeholder="Please enter discount % style="border-radius: 4px;">
-                        </div>
-                    </div>
-                </div>
+
                 <div class="form-actions">
                     <div class="pull-right">
                         <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect"  type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>Update</button>
