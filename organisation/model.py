@@ -42,6 +42,12 @@ class OracleOrgCreditCardDetails(db.EmbeddedDocument):
     expiration_date = db.StringField()
     
     
+class OracleOrgCustomerOfflineTransaction(db.EmbeddedDocument):
+    paid_amount = db.FloatField()
+    transaction_date = db.DateTimeField()
+    products = db.ListField(db.StringField())
+    
+    
 class OracleOrgCustomer(OracleDocumentABC):
     first_name = db.StringField()
     last_name = db.StringField()
@@ -56,6 +62,7 @@ class OracleOrgCustomer(OracleDocumentABC):
     was_subscribed = db.BooleanField(default=False)
     is_active = db.BooleanField(default=False)
     card_details = db.EmbeddedDocumentField(OracleOrgCreditCardDetails, default=OracleOrgCreditCardDetails)
+    offline_transactions = db.EmbeddedDocumentField(OracleOrgCustomerOfflineTransaction, default=OracleOrgCustomerOfflineTransaction)
 
 
 class OracleOrgMonthlyGraduatedCustomers(OracleDocumentABC):

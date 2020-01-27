@@ -5,7 +5,8 @@ from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.utils import redirect
 
 from auth.forms import LoginForm, RegistrationForm
-from dashboard.forms import AddOrganisationCustomerForm, AddOrganisationServiceForm, AddOrganisationProductForm
+from dashboard.forms import AddOrganisationCustomerForm, AddOrganisationServiceForm, AddOrganisationProductForm, \
+    AddOrganisationCustomerOfflineTransactonForm
 from oracle.utils import for_pagination
 from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices, OracleOrgProducts
 from dashboard.forms import subscription_type_list, boolean_type_list
@@ -99,13 +100,14 @@ def oracle_org_delete_customer(customer_id):
     
 
 @auth_views.route(
-    "/customers/<customer_id>/update", methods=["GET", "POST", "DELETE"]
+    "/customers/<customer_id>/update", methods=["GET", "POST"]
 )
 @login_required
 def oracle_org_customer_update(customer_id):
     
     if request.method == "GET":
         customer = OracleOrgCustomer.objects.get(id=str(customer_id))
+        products = OracleOrgProducts.objects.filter()
         services = OracleOrgServices.objects.filter()
         subscription_type = subscription_type_list
         boolean_type = boolean_type_list
@@ -136,6 +138,22 @@ def oracle_org_customers():
         return render_template("customer/customer_creation.html", **kwargs)
 
 
+@auth_views.route(
+    "/customers/<customer_id>/offline_transaction", methods=["POST"]
+)
+@login_required
+def oracle_org_add_offine_transaction(customer_id):
+    
+    if request.method == "POST":
+        form = AddOrganisationCustomerOfflineTransactonForm(request.form)
+        form.save()
+
+        kwargs = locals()
+        return redirect(
+            url_for("auth_views.oracle_org_customers")
+        )
+
+
 @auth_views.route('/service/new', methods=['POST'])
 @login_required
 def oracle_org_create_service():
@@ -157,10 +175,18 @@ def oracle_org_create_service():
 @login_required
 def oracle_org_delete_service(service_id):
     service = OracleOrgServices.objects.get(id=str(service_id))
-    service.delete()
-    return redirect(
-        url_for("auth_views.oracle_org_services")
-    )
+    customers = OracleOrgCustomer.objects.filter(service=service)
+    if customers.count==0:
+        service.delete()
+        return redirect(
+            url_for("auth_views.oracle_org_services")
+        )
+    else:
+        flash(f"Service {service.service_name} is currently being used by customers and therefore can't be deleted.")
+        return redirect(
+            url_for("auth_views.oracle_org_services")
+        )
+
 
 
 @auth_views.route("/services/<service_id>/update", methods=['GET', 'POST'])

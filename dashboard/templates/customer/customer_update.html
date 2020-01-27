@@ -78,7 +78,7 @@
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
                             <li><a href="#update-customer" data-toggle="tab">Update Customers</a></li>
-                            <li ><a href="#offline-transactions" data-toggle="tab">Offline Customer Transaction</a></li>
+                            <li ><a href="#add-offline-transaction" data-toggle="tab">Offline Customer Transaction</a></li>
                         </ul>
                 </div>
                 <div class="panel-body">
@@ -261,7 +261,7 @@
             </div>
                 <div class="form-actions">
                     <div class="pull-right">
-                        <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect"  type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>Update</button>
+                        <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect" id="update-customer-submit-btn" type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>Update</button>
                         <button class="btn btn-small btn-update ripple-effect btn-raised ripple-effect btn-cons cancel-button" type="reset" value="Cancel"><i class="fa fa-times-circle" aria-hidden="true"></i>Cancel</button>
                     </div>
                 </div>
@@ -271,14 +271,84 @@
     </div>
                                         </form>
                                         </div>
-                             </div>
+                             </div> </div>
 
+                    <div class="tab-content">
+                            <div class="tab-pane fade" id="add-offline-transaction">
+                                    <div class="grid simple">
+                                        <div class="grid-body grid-page-title">
+                                            <h3 class="inline">Add <span class="semi-bold">Offline Transaction</span></h3>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <form class="form-no-horizontal-spacing"
+                                              id="product-cycle-form"
+                                              action="{{ url_for('auth_views.oracle_org_add_offine_transaction', customer_id=customer.id) }}" method="POST">
+ <div class="row column-seperation">
+                   <div class="col-md-5 "> <br>
+            <form id="login-form2" class="login-form" action="{{ url_for('auth_views.oracle_org_add_offine_transaction', customer_id=customer.id) }}" method="POST" >
+                                                <div class="row" >
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Customer Email ID</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="text" name="customer_email_id" id="customer_email_id"  value="{{ customer.email_id }}" class="form-control" style="border-radius: 4px;">
+                        </div>
                     </div>
-
                 </div>
-            </div>
+                <div class="row">
+                    <div class="form-group col-md-10">
+                        <label>Product Names</label>
+                      <select id="select-products" class="form-control"  multiple="multiple" name="products">
+                          {% for product in products %}
+                          <option value="{{product.product_name}}">{{product.product_name}} ({{product.product_code}})</option>
+                          {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                       <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Amount Paid</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="number" name="amount_paid" id="amount_paid" class="form-control" placeholder="Please enter product code" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+                  <div class="row">
+                    <div class="form-group col-md-10">
+                        <label class="form-label" style="margin-bottom: 0px;">Transaction Date</label>
+                        <div class="input-with-icon right">
+                            <i class=""></i>
+                            <input type="date" name="transaction_date" id="transaction_date" class="form-control" placeholder="Please enter product cost" style="border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+
+                        <div class="form-actions">
+                                                <div class="pull-right">
+                                                    <button class="btn btn-small btn-g-success btn-raised btn-cons ripple-effect" id="add-offline-transaction-submit-btn" type="submit"><i class="fa fa-hdd-o" aria-hidden="true"></i>&nbsp;Submit</button>
+                                                    <button class="btn btn-small btn-update ripple-effect btn-raised ripple-effect btn-cons cancel-button" type="reset" value="Cancel"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp; Cancel</button>
+                                                </div>
+                                            </div>
+
+
+            </form>
         </div>
     </div>
+
+
+                                            </form>
+                                        </div>
+
+                </div>
+                                    </div>
+
+                    </div>
+            </div>
+        </div>
+
 
 {% endblock %}
 
@@ -286,8 +356,8 @@
 {% block js_scripts %}
     <script type="text/javascript">
 
-            submitHandler: function (form) {
-                $('#add-service-submit-btn').click(function(){
+        submitHandler: function (form) {
+                $('#add-offline-transaction-submit-btn').click(function(){
                     form.submit();
                 });
                 }

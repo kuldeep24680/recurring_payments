@@ -89,6 +89,15 @@
                                             <h3 class="inline">Add <span class="semi-bold">Services</span></h3>
                                             <div class="clearfix"></div>
                                         </div>
+                                                    {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class="flashes list-unstyled alert alert-danger">
+                  {% for message in messages %}
+                    <li>{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
                                         <form class="form-no-horizontal-spacing"
                                               id="product-cycle-form"
                                               action="{{ url_for('auth_views.oracle_org_create_service') }}" method="POST">
@@ -215,8 +224,7 @@
                         </div>
                 </div>
             </div>
-        </div>
-    </div>
+
 
 {% endblock %}
 

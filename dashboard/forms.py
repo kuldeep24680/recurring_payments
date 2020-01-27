@@ -15,7 +15,7 @@ from wtforms import SelectMultipleField, Form
 from wtforms import validators as v
 
 from organisation.model import OracleOrgCustomer, OracleOrgPayment, OracleOrgServices, OracleOrgCreditCardDetails, \
-    OracleOrgProducts
+    OracleOrgProducts, OracleOrgCustomerOfflineTransaction
 
 subscription_type_list = [
     {"id": '1', "value": "Monthly"},
@@ -129,6 +129,21 @@ class AddOrganisationCustomerForm(Form):
         cust.save()
         return cust
 
+
+class AddOrganisationCustomerOfflineTransactonForm(Form):
+    customer_email_id = StringField()
+    amount_paid = FloatField()
+    transaction_date = StringField()
+    products = SelectMultipleField("products")
+    
+    def save(self):
+        customer = OracleOrgCustomer.objects.get(email_id=self.customer_email_id.data)
+        customer.offline_transactions = OracleOrgCustomerOfflineTransaction(
+            paid_amount = self.amount_paid.data,
+            transaction_date = datetime.datetime.strptime(self.transaction_date.data, '%Y-%m-%d'),
+            products = self.products.data
+        )
+        customer.save()
 
 class AddOrganisationServiceForm(Form):
     service_name = StringField()
