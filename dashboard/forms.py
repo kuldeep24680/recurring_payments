@@ -52,6 +52,7 @@ class AddOrganisationCustomerForm(Form):
     card_number = StringField()
     expiration_date = StringField()
     cancel_subcription = BooleanField()
+    reassign_subscription = BooleanField()
     payment_status = BooleanField()
     is_paying_today = BooleanField()
     payment_status = BooleanField()
