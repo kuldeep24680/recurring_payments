@@ -176,6 +176,17 @@
                     </select>
                  </div>
             </div>
+                {% if customer.subscription_id == None %}
+                    {% set row_class = "Not Assigned" %}
+                {% else %}
+                    {% set row_class = "assigned" %}
+                {% endif %}
+                <div class="row"  aria-disabled="true">
+                    <div class="form-group col-md-10">
+                    <label>Is subscription ID assign?</label>
+                        <input type="text" name="assigned_subscription_id" id="assigned_subscription_id" value="{{ row_class }}" class="form-control" style="border-radius: 4px;" readonly="readonly">
+                 </div>
+            </div>
                 <div class="row">
                     <div class="form-group col-md-10">
                     <label>Payment Status</label>
@@ -212,12 +223,6 @@
                     </select>
                  </div>
             </div>
-                <div class="row">
-                </div>
-
-                <div class="row">
-
-                </div>
 
                  <div class="row">
                     <div class="form-group col-md-10">
@@ -243,6 +248,17 @@
                     <div class="form-group col-md-10">
                     <label>Cancel Subscription?</label>
                     <select name="cancel_subscription"  id="cancel_subscription"  required="true">
+                        <option value="True">Yes</option>
+                        <option value="False" selected>No</option>
+                    </select>
+                 </div>
+            </div>
+
+
+                <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Reassign Subscription?</label>
+                    <select name="reassign_subscription"  id="reassign_subscription"  required="true">
                         <option value="True">Yes</option>
                         <option value="False" selected>No</option>
                     </select>
