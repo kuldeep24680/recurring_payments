@@ -37,7 +37,7 @@
             <h4>Customer Report</h4>
         </div>
         <div class="input-daterange">
-            <form method="post" class="form-no-horizontal-spacing" action="{{ url_for('auth_views.oracle_org_report_analysis') }}">
+            <form method="post" class="form-no-horizontal-spacing" action="{{ url_for('auth_views.oracle_org_graduate_customer_report') }}">
                 <div class="col-md-2 col-xs-12 reports-align">
                     <input type="date" class="input-small form-control date-picker start-date-customer-report" name="start_date" placeholder="start-date" />
                 </div>
@@ -54,7 +54,28 @@
             </form>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-3 col-xs-12 form-group">
+            <h4>Offline Transaction Report</h4>
+        </div>
+        <div class="input-daterange">
+            <form method="post" class="form-no-horizontal-spacing" action="{{ url_for('auth_views.oracle_org_customer_offline_transaction_report') }}">
+                <div class="col-md-2 col-xs-12 reports-align">
+                    <input type="date" class="input-small form-control date-picker start-date-customer-report" name="start_date" placeholder="start-date" />
+                </div>
+                <div class="col-md-2 col-xs-12 reports-align">
+                    <input type="date" class="input-small form-control date-picker end-date-customer-report" name="end_date" placeholder="end-date" />
+                </div>
 
+                <div class="col-md-3 reports-align">
+                    <button class="btn btn-block btn-medium btn-md btn-unassign btn-raised ripple-effect" id="generate_button" type="submit">
+                        <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
+                        Generate Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     </div>
 
 </div>

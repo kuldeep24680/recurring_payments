@@ -11,8 +11,7 @@ from oracle.utils import for_pagination
 from organisation.model import OracleOrgUser, OracleOrgCustomer, OracleOrgServices, OracleOrgProducts
 from dashboard.forms import subscription_type_list, boolean_type_list
 from oracle.tasks import subscription_assignment, cancel_customer_subscription_service, \
-    monthly_graduated_customer_report
-
+    monthly_graduated_customer_report, offline_customer_transactions_report
 
 auth_views = Blueprint("auth_views", __name__, template_folder="templates")
 
@@ -188,7 +187,6 @@ def oracle_org_delete_service(service_id):
         )
 
 
-
 @auth_views.route("/services/<service_id>/update", methods=['GET', 'POST'])
 @login_required
 def oracle_org_update_service(service_id):
@@ -270,7 +268,7 @@ def oracle_org_products():
         return render_template("products/product_creation.html", **kwargs)
     
     
-@auth_views.route("/report", methods=["GET", "POST"])
+@auth_views.route("/reports", methods=["GET", "POST"])
 @login_required
 def oracle_org_report_analysis():
     
@@ -278,12 +276,35 @@ def oracle_org_report_analysis():
         user = OracleOrgUser.objects.get(id=current_user.id)
         kwargs = locals()
         return render_template("reports/reports.html", **kwargs)
-    
+
+
+@auth_views.route("/report/graduated_customer", methods=["POST"])
+@login_required
+def oracle_org_graduate_customer_report():
+
     if request.method == "POST":
         user = OracleOrgUser.objects.get(id=current_user.id)
         start_date = datetime.datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         monthly_graduated_customer_report(user.id,start_date,end_date)
+        
+        flash(
+            "Report is being generated. It will be sent to your registered email Id {}.If this is not the correct email ID, please contact your administrator to update your email ID.".format(
+                user.email_id
+            ),
+            "success",
+        )
+        return redirect(url_for("auth_views.oracle_org_report_analysis"))
+
+
+@auth_views.route("/report/offline_transaction", methods=["POST"])
+@login_required
+def oracle_org_customer_offline_transaction_report():
+    if request.method == "POST":
+        user = OracleOrgUser.objects.get(id=current_user.id)
+        start_date = datetime.datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+        offline_customer_transactions_report(user.id, start_date, end_date)
         
         flash(
             "Report is being generated. It will be sent to your registered email Id {}.If this is not the correct email ID, please contact your administrator to update your email ID.".format(

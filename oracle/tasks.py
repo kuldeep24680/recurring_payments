@@ -10,13 +10,15 @@ from oracle.settings import BUFFER_PERIOD
 from payment_modes.credit_card.create_subscription import create_subscription
 from payment_modes.credit_card.delete_subscription import cancel_subscription
 from payment_modes.credit_card.get_subscription_payment_details import get_recurring_payment_transaction_id
-from reports.utils import generate_customer_payment_report, generate_monthly_graduated_customer_report
+from reports.report_generation import generate_customer_payment_report, generate_monthly_graduated_customer_report, \
+    generate_offline_transaction_report
 
 celery = Celery("oracle.tasks",backend=mainapp.config["result_backend"],broker=mainapp.config["celery_broker_url"])
 
 celery.conf.update(mainapp.config)
 
 logger = logging.getLogger(__name__)
+
 
 def payment_confirmation_mail(merchant_email_id, customer_id):
     """
@@ -184,6 +186,24 @@ def monthly_graduated_customer_report(user_id, start_date, end_date):
         send_attachment(report_name, "Graduate Customer Report", user.email_id)
     else:
         logger.error("Graduate Customer Report has not been generated.")
+        
+        
+@celery.task
+def offline_customer_transactions_report(user_id, start_date, end_date):
+    """
+    This function is run both periodicly as well as invoked by celery to generate and mail  report attached.
+    :param user_id:
+    :param start_date:
+    :param end_date:
+    :return:
+    """
+    user = OracleOrgUser.objects.get(id=user_id)
+    status, report_name = generate_offline_transaction_report(
+        start_date, end_date)
+    if status:
+        send_attachment(report_name, "Offline Customer Transaction Report", user.email_id)
+    else:
+        logger.error("Offline Customer Transaction Report has not been generated.")
         
         
     

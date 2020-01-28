@@ -62,7 +62,22 @@ class OracleOrgCustomer(OracleDocumentABC):
     was_subscribed = db.BooleanField(default=False)
     is_active = db.BooleanField(default=False)
     card_details = db.EmbeddedDocumentField(OracleOrgCreditCardDetails, default=OracleOrgCreditCardDetails)
-    offline_transactions = db.EmbeddedDocumentField(OracleOrgCustomerOfflineTransaction, default=OracleOrgCustomerOfflineTransaction)
+    offline_transactions = db.EmbeddedDocumentListField(OracleOrgCustomerOfflineTransaction)
+
+    def transactions_within_duration(self, start_date, end_date):
+        """
+        returns the offline transactions made in a given interval
+        :param start_date:
+        :param end_date:
+        :return: list of payments
+        """
+        if self.offline_transactions:
+            transactions_within_period = []
+            for transaction in self.offline_transactions:
+                if transaction.transaction_date is not None:
+                    if start_date <= transaction.transaction_date < end_date:
+                        transactions_within_period.append(transaction)
+            return transactions_within_period
 
 
 class OracleOrgMonthlyGraduatedCustomers(OracleDocumentABC):

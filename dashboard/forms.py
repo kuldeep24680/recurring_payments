@@ -138,12 +138,14 @@ class AddOrganisationCustomerOfflineTransactonForm(Form):
     
     def save(self):
         customer = OracleOrgCustomer.objects.get(email_id=self.customer_email_id.data)
-        customer.offline_transactions = OracleOrgCustomerOfflineTransaction(
+        transaction = OracleOrgCustomerOfflineTransaction(
             paid_amount = self.amount_paid.data,
             transaction_date = datetime.datetime.strptime(self.transaction_date.data, '%Y-%m-%d'),
             products = self.products.data
         )
+        customer.offline_transactions.append(transaction)
         customer.save()
+
 
 class AddOrganisationServiceForm(Form):
     service_name = StringField()
