@@ -121,6 +121,7 @@ def oracle_org_customer_update(customer_id):
         
         if cancel_subscription:
             cancel_customer_subscription_service.delay(str(cust.id))
+        # reassignment if customer does not have a subscription id
         if reassign_subscription and not cust.subscription_id:
             subscription_assignment.delay(str(cust.id))
         kwargs = locals()
