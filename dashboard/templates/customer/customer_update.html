@@ -178,9 +178,9 @@
                 <div class="row">
                     <div class="form-group col-md-10">
                     <label>Payment Status</label>
-                    <select name="payment_status" id="payment_status"   required="true">
+                    <select name="payment_status" id="payment_status"   >
                         {% for item in boolean_type %}
-                            <option  {% if customer.payment.payment_status == item.id %} selected="selected"{% endif %} value="{{ item.id }}">{{ item.value }}</option>
+                            <option  {% if customer.payment.payment_status == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %} value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
                     </select>
                  </div>
@@ -188,9 +188,9 @@
                  <div class="row">
                     <div class="form-group col-md-10">
                     <label>Is Paying today</label>
-                    <select name="is_paying_today"  id="is_paying_today" required="true">
+                    <select name="is_paying_today"  id="is_paying_today" >
                         {% for item in boolean_type %}
-                            <option {% if customer.payment.is_paying_today == item.id %} selected="selected"{% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                            <option {% if customer.payment.is_paying_today == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %}  value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
                     </select>
                  </div>
@@ -204,9 +204,9 @@
                 <div class="row">
                     <div class="form-group col-md-10">
                     <label>Is Defaulter</label>
-                    <select name="is_defaulter"  id="is_defaulter"  required="true">
+                    <select name="is_defaulter"  id="is_defaulter" >
                         {% for item in boolean_type %}
-                            <option {% if customer.payment.is_defaulter == item.id %} selected="selected"{% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                            <option {% if customer.payment.is_defaulter == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %}  value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
                     </select>
                  </div>
@@ -241,18 +241,29 @@
                 <div class="row">
                     <div class="form-group col-md-10">
                     <label>Cancel Subscription?</label>
-                    <select name="cancel_subscription"  id="cancel_subscription"  required="true">
+                    <select name="cancel_subscription"  id="cancel_subscription"  >
                         <option value="True">Yes</option>
-                        <option value="False" selected>No</option>
+                        <option value="" selected>No</option>
+                    </select>
+                 </div>
+            </div>
+
+
+                <div class="row">
+                    <div class="form-group col-md-10">
+                    <label>Reassign Subscription?</label>
+                    <select name="reassign_subscription"  id="reassign_subscription"  >
+                        <option value="True">Yes</option>
+                        <option value="" selected>No</option>
                     </select>
                  </div>
             </div>
                 <div class="row">
                     <div class="form-group col-md-10">
                     <label>Mark Customer Active</label>
-                    <select name="is_active"  id="is_active"  required="true">
+                    <select name="is_active"  id="is_active" >
                         {% for item in boolean_type %}
-                        <option {% if customer.is_active == item.id %} selected="selected"{% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                        <option {% if customer.is_active == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %}  value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
 
                     </select>

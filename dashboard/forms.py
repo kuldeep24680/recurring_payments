@@ -24,8 +24,8 @@ subscription_type_list = [
 ]
 
 boolean_type_list = [
-    {"id": True, "value": "Yes"},
-    {"id": False, "value": "No"},
+    {"id": 'True', "value": "Yes"},
+    {"id": '', "value": "No"},
 ]
 
 
@@ -50,13 +50,13 @@ class AddOrganisationCustomerForm(Form):
     )
     card_number = StringField()
     expiration_date = StringField()
-    cancel_subcription = BooleanField()
-    payment_status = BooleanField()
-    is_paying_today = BooleanField()
-    payment_status = BooleanField()
+    cancel_subscription = StringField()
+    reassign_subscription = StringField()
+    payment_status = StringField()
+    is_paying_today = StringField()
     payment_pending_days = IntegerField()
-    is_defaulter = BooleanField()
-    is_active = BooleanField()
+    is_defaulter = StringField()
+    is_active = StringField()
 
     def validate(self):
         
@@ -75,7 +75,7 @@ class AddOrganisationCustomerForm(Form):
         cust.last_name = self.last_name.data
         cust.phone_number = self.phone_number.data
         cust.subscription_type = self.subscription_type.data
-        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d')
+        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d').date()
         due_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
         cust.due_date = due_date.date()
         cust.service = service
@@ -106,21 +106,21 @@ class AddOrganisationCustomerForm(Form):
         cust.last_name = self.last_name.data
         cust.phone_number = self.phone_number.data
         cust.subscription_type = self.subscription_type.data
-        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d')
-        due_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
+        cust.start_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d %H:%M:%S').date()
+        due_date = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(int(self.subscription_type.data) * 365 / 12)
         cust.due_date = due_date.date()
         cust.service = service
         cust.payment_mode = self.payment_mode.data
         cust.payment = OracleOrgPayment(
-            payment_status=self.payment_status.data,
-            is_paying_today=self.is_paying_today.data,
+            payment_status=bool(self.payment_status.data),
+            is_paying_today=bool(self.is_paying_today.data),
             payment_mode=self.payment_mode.data,
             due_payment=float(service.service_cost_per_month*(int(self.subscription_type.data))),
             payment_pending_days=self.payment_pending_days.data,
-            is_defaulter=self.is_defaulter.data,
+            is_defaulter=bool(self.is_defaulter.data),
             transaction_id=None
         )
-        cust.is_active = self.is_active.data
+        cust.is_active = bool(self.is_active.data)
         cust.card_details = OracleOrgCreditCardDetails(
             card_number=self.card_number.data,
             expiration_date=self.expiration_date.data

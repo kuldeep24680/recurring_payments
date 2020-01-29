@@ -114,10 +114,11 @@ def oracle_org_customer_update(customer_id):
     
     if request.method == "POST":
         form = AddOrganisationCustomerForm(request.form)
-        cancel_subscription = form.cancel_subcription.data
+        cancel_subscription = bool(form.cancel_subscription.data)
+        reassign_subscription = bool(form.reassign_subscription.data)
         cust = form.update()
         
-        if cancel_subscription:
+        if cancel_subscription and cust.subscription_id is not None:
             cancel_customer_subscription_service.delay(str(cust.id))
         kwargs = locals()
         return redirect(
