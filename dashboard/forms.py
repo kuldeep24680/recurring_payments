@@ -24,7 +24,7 @@ subscription_type_list = [
 ]
 
 boolean_type_list = [
-    {"id": 'True', "value": "Yes"},
+    {"id": True, "value": "Yes"},
     {"id": '', "value": "No"},
 ]
 

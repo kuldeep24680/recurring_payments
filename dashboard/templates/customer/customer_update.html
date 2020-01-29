@@ -180,7 +180,7 @@
                     <label>Payment Status</label>
                     <select name="payment_status" id="payment_status"   >
                         {% for item in boolean_type %}
-                            <option  {% if customer.payment.payment_status == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %} value="{{ item.id }}">{{ item.value }}</option>
+                            <option  {% if customer.payment.payment_status == false %} {{ No }}  selected="selected" {% else %} {{ Yes }}  {% endif %} value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
                     </select>
                  </div>
@@ -190,7 +190,7 @@
                     <label>Is Paying today</label>
                     <select name="is_paying_today"  id="is_paying_today" >
                         {% for item in boolean_type %}
-                            <option {% if customer.payment.is_paying_today == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                            <option {% if customer.payment.is_paying_today == false %} {{ No }}  selected="selected" {% else %} {{ Yes }}  {% endif %}  value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
                     </select>
                  </div>
@@ -206,7 +206,7 @@
                     <label>Is Defaulter</label>
                     <select name="is_defaulter"  id="is_defaulter" >
                         {% for item in boolean_type %}
-                            <option {% if customer.payment.is_defaulter == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                            <option {% if customer.payment.is_defaulter== false %} {{ No }}  selected="selected" {% else %} {{ Yes }}  {% endif %}   value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
                     </select>
                  </div>
@@ -263,7 +263,7 @@
                     <label>Mark Customer Active</label>
                     <select name="is_active"  id="is_active" >
                         {% for item in boolean_type %}
-                        <option {% if customer.is_active == item.id %} selected="selected" {% else %} {{ No }} selected="selected" {% endif %}  value="{{ item.id }}">{{ item.value }}</option>
+                        <option {% if customer.is_active == false %} {{ No }}  selected="selected" {% else %} {{ Yes }}  {% endif %}   value="{{ item.id }}">{{ item.value }}</option>
                     {% endfor %}
 
                     </select>

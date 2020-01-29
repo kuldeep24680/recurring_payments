@@ -127,7 +127,7 @@
                     <label>Is Offer Available?</label>
                     <select  type="text" name="is_offer_available"  id="is_offer_available"  required="true">
                         {% for item in boolean_type %}
-                          <option {% if service.is_offer_available == item.id %} selected="selected"{% endif %} value="{{ item.id }}" >{{ item.value}}</option>
+                          <option {% if service.is_offer_available == item.value %} selected="selected"{% endif %} value="{{ item.value }}" >{{ item.value}}</option>
                         {% endfor %}
                     </select>
                  </div>
