@@ -1,6 +1,6 @@
 import os
 
-KEY = 'd413519f1bda2c8d7a700aab95cdef57-f7910792-ee3b91ed'
+KEY = ''
 SANDBOX = ''
 
 BUFFER_PERIOD = 5
