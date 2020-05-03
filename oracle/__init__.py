@@ -14,7 +14,7 @@ mainapp.config["MONGODB_SETTINGS"] = MONGODB_SETTINGS
 # updating settings.
 mainapp.config.update(AWS_SETTINGS)
 mainapp.config.update(CELERY_SETTINGS)
-mainapp.config["SECRET_KEY"] = "^udtr!d^_vw22_+a=f1*au01xn(adtyce7^5k5ndkf6e%2z%aq"
+mainapp.config["SECRET_KEY"] = ""
 
 login_manager = LoginManager()
 login_manager.session_protection = "strong"
