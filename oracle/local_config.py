@@ -22,7 +22,7 @@ AWS_SETTINGS = {
 
 
 AUTHORIZE_CREDENTIALS = {
-    "api_login_name": "8HtWfmFw2k6j",
+    "api_login_name": "",
     "transaction_key": ""
 }
 
@@ -35,8 +35,8 @@ CELERY_SETTINGS = {
 }
 
 ADMIN = {
-    "email_id" : "admin@oracleproducts.com",
-    "password" : "oracle@123"
+    "email_id" : "",
+    "password" : ""
 }
 
 
